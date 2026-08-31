@@ -1,0 +1,28 @@
+[workspace]
+resolver = "2"
+members = [
+  "packages/ui",
+  "packages/web",
+  "packages/desktop",
+  "packages/mobile",
+  "packages/api",
+]
+
+[profile.release]
+codegen-units = 1
+lto = true
+strip = true
+
+[profile.dev.package."*"]
+debug = false
+
+[workspace.dependencies]
+dioxus = { version = "0.7.1" }
+
+ui = { path = "packages/ui" }
+api = { path = "packages/api" }
+
+[workspace.lints.clippy]
+wildcard_imports = "deny"
+dbg_macro = "warn"
+todo = "warn"
