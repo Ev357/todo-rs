@@ -25,7 +25,7 @@
     nixpkgs,
     fenix,
     ...
-  } @ inputs: let
+  }: let
     forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
   in {
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
@@ -36,7 +36,7 @@
         overlays = [fenix.overlays.default];
       };
     in {
-      default = pkgs.callPackage ./nix/shell.nix {inherit inputs;};
+      default = pkgs.callPackage ./nix/shell.nix {};
     });
   };
 }

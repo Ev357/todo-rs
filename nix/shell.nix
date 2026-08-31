@@ -1,12 +1,54 @@
 {
-  pkgs,
-  inputs,
-  ...
-}:
-pkgs.mkShell {
-  packages = with pkgs; [
-    inputs.fenix.packages.${stdenv.hostPlatform.system}.default.toolchain
-    rust-analyzer-nightly
-    dioxus-cli
+  callPackage,
+  lib,
+  mkShell,
+  at-spi2-core,
+  cairo,
+  gdk-pixbuf,
+  glib,
+  gtk3,
+  harfbuzz,
+  libsoup_3,
+  openssl,
+  pango,
+  pkg-config,
+  rust-analyzer-nightly,
+  taplo,
+  webkitgtk_4_1,
+  xdotool,
+}: let
+  toolchain = callPackage ./toolchain.nix {};
+  runtimeLibs = [
+    at-spi2-core
+    cairo
+    gdk-pixbuf
+    glib
+    gtk3
+    harfbuzz
+    libsoup_3
+    openssl
+    pango
+    webkitgtk_4_1
+    xdotool
   ];
-}
+in
+  mkShell {
+    packages =
+      [
+        toolchain
+        rust-analyzer-nightly
+        taplo
+        pkg-config
+      ]
+      ++ runtimeLibs;
+
+    shellHook =
+      # bash
+      ''
+        export PATH="$PATH:$HOME/.cargo/bin"
+      '';
+
+    env = {
+      LD_LIBRARY_PATH = lib.makeLibraryPath runtimeLibs;
+    };
+  }
