@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use ui::{Echo, Hero};
+use todo_ui::{Echo, Hero};
 
 #[component]
 pub fn Home() -> Element {

@@ -1,5 +1,5 @@
 [package]
-name = "web"
+name = "todo-mobile"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,9 +8,9 @@ workspace = true
 
 [dependencies]
 dioxus = { workspace = true, features = ["router", "fullstack"] }
-ui = { workspace = true }
+todo-ui = { workspace = true }
 
 [features]
 default = []
-web = ["dioxus/web"]
-server = ["dioxus/server", "ui/server"]
+mobile = ["dioxus/mobile"]
+server = ["dioxus/server", "todo-ui/server"]

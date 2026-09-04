@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use ui::Navbar;
+use todo_ui::Navbar;
 use views::{Blog, Home};
 
 mod views;

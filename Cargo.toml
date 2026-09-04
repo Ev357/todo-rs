@@ -1,11 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
-  "packages/ui",
-  "packages/web",
-  "packages/desktop",
-  "packages/mobile",
-  "packages/api",
+  "todo-ui",
+  "todo-web",
+  "todo-desktop",
+  "todo-mobile",
+  "todo-api",
   "todo-server",
 ]
 
@@ -25,8 +25,8 @@ color-eyre = "0.6.5"
 serde = { version = "1.0.229", features = ["derive"] }
 axum = { version = "0.8.9", features = ["macros"] }
 
-ui = { path = "packages/ui" }
-api = { path = "packages/api" }
+todo-ui = { path = "todo-ui" }
+todo-api = { path = "todo-api" }
 
 [workspace.lints.clippy]
 wildcard_imports = "deny"

@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use ui::Navbar;
+use todo_ui::Navbar;
 use views::{Blog, Home};
 
 mod views;
@@ -7,7 +7,7 @@ mod views;
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 enum Route {
-    #[layout(MobileNavbar)]
+    #[layout(DesktopNavbar)]
     #[route("/")]
     Home {},
     #[route("/blog/:id")]
@@ -32,10 +32,10 @@ fn App() -> Element {
     }
 }
 
-/// A mobile-specific Router around the shared `Navbar` component
-/// which allows us to use the mobile-specific `Route` enum.
+/// A desktop-specific Router around the shared `Navbar` component
+/// which allows us to use the desktop-specific `Route` enum.
 #[component]
-fn MobileNavbar() -> Element {
+fn DesktopNavbar() -> Element {
     rsx! {
         Navbar {
             Link {
