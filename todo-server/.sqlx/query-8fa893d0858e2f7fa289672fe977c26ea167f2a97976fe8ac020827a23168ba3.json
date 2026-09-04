@@ -1,0 +1,62 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        INSERT INTO todos (title, is_completed, created_at)\n        VALUES (?, ?, ?)\n        RETURNING id, title, is_completed, created_at\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer",
+        "origin": {
+          "Table": {
+            "table": "todos",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "name": "title",
+        "ordinal": 1,
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "todos",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "name": "is_completed",
+        "ordinal": 2,
+        "type_info": "Bool",
+        "origin": {
+          "Table": {
+            "table": "todos",
+            "name": "is_completed"
+          }
+        }
+      },
+      {
+        "name": "created_at",
+        "ordinal": 3,
+        "type_info": "Integer",
+        "origin": {
+          "Table": {
+            "table": "todos",
+            "name": "created_at"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 3
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "8fa893d0858e2f7fa289672fe977c26ea167f2a97976fe8ac020827a23168ba3"
+}

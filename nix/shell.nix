@@ -45,6 +45,7 @@ in
     shellHook =
       # bash
       ''
+        export DATABASE_URL="sqlite://$XDG_DATA_HOME/todo/database.db"
         export PATH="$PATH:$HOME/.cargo/bin"
       '';
 

@@ -6,6 +6,7 @@ members = [
   "packages/desktop",
   "packages/mobile",
   "packages/api",
+  "todo-server",
 ]
 
 [profile.release]
@@ -18,6 +19,11 @@ debug = false
 
 [workspace.dependencies]
 dioxus = { version = "0.7.1" }
+sqlx = { version = "0.9.0", features = ["sqlite", "runtime-tokio"] }
+tokio = { version = "1.53.1", features = ["full"] }
+color-eyre = "0.6.5"
+serde = { version = "1.0.229", features = ["derive"] }
+axum = { version = "0.8.9", features = ["macros"] }
 
 ui = { path = "packages/ui" }
 api = { path = "packages/api" }
