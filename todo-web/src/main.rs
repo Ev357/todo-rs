@@ -1,21 +1,10 @@
 use dioxus::prelude::*;
-use todo_ui::Navbar;
-use views::{Blog, Home};
 
-mod views;
+use crate::{components::input::Input, head_meta::HeadMeta, todo_list::TodoList};
 
-#[derive(Debug, Clone, Routable, PartialEq)]
-#[rustfmt::skip]
-enum Route {
-    #[layout(WebNavbar)]
-    #[route("/")]
-    Home {},
-    #[route("/blog/:id")]
-    Blog { id: i32 },
-}
-
-const FAVICON: Asset = asset!("/assets/favicon.ico");
-const MAIN_CSS: Asset = asset!("/assets/main.css");
+mod components;
+mod head_meta;
+mod todo_list;
 
 fn main() {
     dioxus::launch(App);
@@ -23,33 +12,28 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    // Build cool things ✌️
+    let mut search_term = use_signal(String::new);
 
     rsx! {
-        // Global app resources
-        document::Link { rel: "icon", href: FAVICON }
-        document::Link { rel: "stylesheet", href: MAIN_CSS }
+        HeadMeta {}
 
-        Router::<Route> {}
-    }
-}
+        div { class: "flex justify-center pt-8 bg-background text-foreground min-h-screen transition-colors",
+            div { class: "flex flex-col items-center max-w-7xl w-full",
+                div { class: "flex flex-col items-center max-w-xl w-full p-4 space-y-4",
+                    h1 { class: "text-2xl font-bold text-center", "Todo App" }
 
-/// A web-specific Router around the shared `Navbar` component
-/// which allows us to use the web-specific `Route` enum.
-#[component]
-fn WebNavbar() -> Element {
-    rsx! {
-        Navbar {
-            Link {
-                to: Route::Home {},
-                "Home"
-            }
-            Link {
-                to: Route::Blog { id: 1 },
-                "Blog"
+                    Input {
+                        oninput: move |e: FormEvent| search_term.set(e.value()),
+                        placeholder: "Search todos...",
+                        value: search_term,
+                    }
+
+                    SuspenseBoundary {
+                        fallback: |_| rsx! { p { class: "text-muted-foreground text-sm", "Loading..." } },
+                        TodoList { search: search_term }
+                    }
+                }
             }
         }
-
-        Outlet::<Route> {}
     }
 }

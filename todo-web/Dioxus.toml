@@ -1,0 +1,13 @@
+[application]
+name = "todo-web"
+default_platform = "web"
+asset_dir = "assets"
+tailwind_input = "tailwind.css"
+tailwind_output = "assets/tailwind.css"
+
+[web.app]
+title = "Todo"
+
+[web.watcher]
+reload_html = true
+watch_path = ["src", "assets", "tailwind.css", "../todo-ui/src"]

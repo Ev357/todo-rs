@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use crate::define_entity;
 
 define_entity!(
@@ -10,3 +12,9 @@ define_entity!(
         created_at: i64,
     }
 );
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct TodoQuery {
+    pub search: Option<String>,
+    pub is_completed: Option<bool>,
+}

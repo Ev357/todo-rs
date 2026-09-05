@@ -7,10 +7,12 @@ edition = "2021"
 workspace = true
 
 [dependencies]
+todo-api = { workspace = true }
+todo-server = { workspace = true, default-features = false }
+
 dioxus = { workspace = true, features = ["router", "fullstack"] }
-todo-ui = { workspace = true }
 
 [features]
 default = []
 web = ["dioxus/web"]
-server = ["dioxus/server", "todo-ui/server"]
+server = ["dioxus/server"]

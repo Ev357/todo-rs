@@ -6,18 +6,19 @@ macro_rules! define_entity {
             $($field:ident : $ftype:ty),* $(,)?
         }
     ) => {
-        #[derive(Debug, Clone, PartialEq, sqlx::prelude::FromRow, serde::Serialize)]
+        #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+        #[cfg_attr(feature = "sqlx", derive(sqlx::prelude::FromRow))]
         pub struct $name {
             pub $id_field: $id_type,
             $(pub $field: $ftype,)*
         }
 
-        #[derive(Debug, Clone, PartialEq, serde::Deserialize)]
+        #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
         pub struct $create_name {
             $(pub $field: $ftype,)*
         }
 
-        #[derive(Debug, Clone, PartialEq, serde::Deserialize)]
+        #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
         pub struct $patch_name {
             $(pub $field: Option<$ftype>,)*
         }

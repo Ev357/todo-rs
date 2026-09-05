@@ -7,7 +7,11 @@ edition = "2021"
 workspace = true
 
 [dependencies]
+todo-server = { workspace = true, default-features = false }
+
 dioxus = { workspace = true, features = ["fullstack"] }
+reqwest = { workspace = true, optional = true }
+serde = { workspace = true }
 
 [features]
-server = ["dioxus/server"]
+server = ["dioxus/server", "dep:reqwest"]

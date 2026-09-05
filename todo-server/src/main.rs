@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use axum::Router;
 use color_eyre::eyre::Result;
 use sqlx::{SqlitePool, sqlite::SqliteConnectOptions};
 use tokio::net::TcpListener;
@@ -29,7 +30,11 @@ async fn main() -> Result<()> {
     let app = routes::router().with_state(ApiContext { db });
 
     let listener = TcpListener::bind((config.address, config.port)).await?;
-    axum::serve(listener, app).await?;
+    run(listener, app).await;
 
     Ok(())
+}
+
+async fn run(listener: TcpListener, app: Router<()>) {
+    let _ = axum::serve(listener, app).await;
 }

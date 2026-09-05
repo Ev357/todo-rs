@@ -8,9 +8,8 @@ workspace = true
 
 [dependencies]
 dioxus = { workspace = true, features = ["router", "fullstack"] }
-todo-ui = { workspace = true }
 
 [features]
 default = []
 mobile = ["dioxus/mobile"]
-server = ["dioxus/server", "todo-ui/server"]
+server = ["dioxus/server"]
