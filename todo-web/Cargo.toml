@@ -15,4 +15,4 @@ dioxus = { workspace = true, features = ["router", "fullstack"] }
 [features]
 default = []
 web = ["dioxus/web"]
-server = ["dioxus/server"]
+server = ["dioxus/server", "todo-api/server"]
