@@ -31,33 +31,25 @@ pub fn TodoList(search: ReadSignal<String>) -> Element {
     })?;
 
     let handle_toggle = move |todo_id: i64| {
-        let current = todos
-            .read()
-            .as_ref()
-            .and_then(|map| map.get(&todo_id).cloned());
+        let prev_completed = mutate_todo(&mut todos, todo_id, |item| {
+            let prev = item.is_completed;
+            item.is_completed = !prev;
+            prev
+        });
 
-        if let Some(todo) = current {
-            let next_completed = !todo.is_completed;
-
-            mutate_todo(&mut todos, todo_id, |item| {
-                item.is_completed = next_completed;
-            });
+        if let Some(prev) = prev_completed {
+            let next_completed = !prev;
 
             spawn(async move {
                 let update = PatchTodo {
-                    title: None,
-                    created_at: None,
                     is_completed: Some(next_completed),
+                    ..Default::default()
                 };
 
                 match patch_todo(todo_id, update).await {
-                    Ok(authoritative) => {
-                        mutate_todo(&mut todos, todo_id, |item| *item = authoritative);
-                    }
-                    Err(_) => mutate_todo(&mut todos, todo_id, |item| {
-                        item.is_completed = todo.is_completed;
-                    }),
-                }
+                    Ok(authoritative) => mutate_todo(&mut todos, todo_id, |t| *t = authoritative),
+                    Err(_) => mutate_todo(&mut todos, todo_id, |t| t.is_completed = prev),
+                };
             });
         }
     };
@@ -103,10 +95,10 @@ pub fn TodoList(search: ReadSignal<String>) -> Element {
     }
 }
 
-fn mutate_todo(todos: &mut Resource<IndexMap<i64, Todo>>, id: i64, f: impl FnOnce(&mut Todo)) {
-    if let Some(map) = todos.write().as_mut() {
-        if let Some(item) = map.get_mut(&id) {
-            f(item);
-        }
-    }
+fn mutate_todo<R>(
+    todos: &mut Resource<IndexMap<i64, Todo>>,
+    id: i64,
+    f: impl FnOnce(&mut Todo) -> R,
+) -> Option<R> {
+    todos.write().as_mut()?.get_mut(&id).map(f)
 }
