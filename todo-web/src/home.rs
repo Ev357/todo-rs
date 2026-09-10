@@ -53,7 +53,19 @@ pub fn Home(search: String) -> Element {
                     }
                 }
 
-                TodoList { search: query }
+                TodoList {
+                    search: query,
+                    onadd: move |_| {
+                        if let Some(task) = debounce_task.take() {
+                            task.cancel();
+                        }
+                        input_text.set(String::new());
+                        query.set(String::new());
+                        nav.replace(Route::Home {
+                            search: String::new(),
+                        });
+                    },
+                }
             }
         }
     }

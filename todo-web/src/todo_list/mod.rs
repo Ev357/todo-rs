@@ -8,6 +8,7 @@ use todo_server::db::todo::{CreateTodo, PatchTodo, Todo, TodoQuery, Uuid};
 
 use crate::{
     components::skeleton::Skeleton,
+    icons::inbox::InboxIcon,
     todo_list::{add::AddItem, item::TodoItem},
 };
 
@@ -15,7 +16,7 @@ pub mod add;
 mod item;
 
 #[component]
-pub fn TodoList(search: ReadSignal<String>) -> Element {
+pub fn TodoList(search: ReadSignal<String>, onadd: EventHandler<()>) -> Element {
     let mut add_action = use_action(post_todos);
 
     let handle_add = use_callback(move |title: String| {
@@ -23,6 +24,7 @@ pub fn TodoList(search: ReadSignal<String>) -> Element {
             title,
             ..Default::default()
         });
+        onadd.call(());
     });
 
     rsx! {
@@ -118,7 +120,17 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
                 }
             }
         } else {
-            p { class: "text-muted-foreground text-sm", "No todos found." }
+            div {
+                class: "flex flex-col items-center justify-center gap-2 py-12",
+                InboxIcon {
+                    size: 40,
+                    class: "text-muted-foreground/60",
+                }
+                p {
+                    class: "text-muted-foreground text-center text-sm font-medium",
+                    "No todos found"
+                }
+            }
         }
     }
 }
