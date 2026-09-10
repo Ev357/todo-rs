@@ -4,6 +4,7 @@ use axum::{
     http::StatusCode,
     routing::get,
 };
+use uuid::Uuid;
 
 use crate::{
     api_context::ApiContext,
@@ -23,12 +24,12 @@ pub fn router() -> Router<ApiContext> {
 #[axum::debug_handler]
 async fn get_todo(
     State(ApiContext { db }): State<ApiContext>,
-    Path(id): Path<i64>,
+    Path(id): Path<Uuid>,
 ) -> Result<Json<Todo>, StatusCode> {
     let todo = sqlx::query_as!(
         Todo,
         r#"
-        SELECT id, title, is_completed, created_at
+        SELECT id as "id!: Uuid", title, is_completed, created_at
         FROM todos
         WHERE id = ?
         "#,
@@ -45,7 +46,7 @@ async fn get_todo(
 #[axum::debug_handler]
 async fn put_todo(
     State(ApiContext { db }): State<ApiContext>,
-    Path(id): Path<i64>,
+    Path(id): Path<Uuid>,
     Json(payload): Json<CreateTodo>,
 ) -> Result<Json<Todo>, StatusCode> {
     let todo = sqlx::query_as!(
@@ -56,7 +57,7 @@ async fn put_todo(
             title = ?,
             is_completed = ?
         WHERE id = ?
-        RETURNING id, title, is_completed, created_at
+        RETURNING id as "id!: Uuid", title, is_completed, created_at
         "#,
         payload.title,
         payload.is_completed,
@@ -73,7 +74,7 @@ async fn put_todo(
 #[axum::debug_handler]
 async fn patch_todo(
     State(ApiContext { db }): State<ApiContext>,
-    Path(id): Path<i64>,
+    Path(id): Path<Uuid>,
     Json(payload): Json<PatchTodo>,
 ) -> Result<Json<Todo>, StatusCode> {
     let todo = sqlx::query_as!(
@@ -84,7 +85,7 @@ async fn patch_todo(
             title = COALESCE(?, title),
             is_completed = COALESCE(?, is_completed)
         WHERE id = ?
-        RETURNING id, title, is_completed, created_at
+        RETURNING id as "id!: Uuid", title, is_completed, created_at
         "#,
         payload.title,
         payload.is_completed,
@@ -101,7 +102,7 @@ async fn patch_todo(
 #[axum::debug_handler]
 async fn delete_todo(
     State(ApiContext { db }): State<ApiContext>,
-    Path(id): Path<i64>,
+    Path(id): Path<Uuid>,
 ) -> Result<StatusCode, StatusCode> {
     let result = sqlx::query!(
         r#"

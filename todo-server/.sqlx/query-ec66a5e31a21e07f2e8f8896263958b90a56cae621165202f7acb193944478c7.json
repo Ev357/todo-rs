@@ -1,12 +1,12 @@
 {
   "db_name": "SQLite",
-  "query": "\n        SELECT id, title, is_completed, created_at\n        FROM todos\n        WHERE id = ?\n        ",
+  "query": "\n        SELECT id as \"id!: Uuid\", title, is_completed, created_at\n        FROM todos\n        ORDER BY is_completed ASC, created_at DESC, id DESC\n        ",
   "describe": {
     "columns": [
       {
-        "name": "id",
+        "name": "id!: Uuid",
         "ordinal": 0,
-        "type_info": "Integer",
+        "type_info": "Text",
         "origin": {
           "Table": {
             "table": "todos",
@@ -49,14 +49,14 @@
       }
     ],
     "parameters": {
-      "Right": 1
+      "Right": 0
     },
     "nullable": [
-      false,
+      true,
       false,
       false,
       false
     ]
   },
-  "hash": "4d95eab1fe09ad8cf9901abe42d63b96ca42928767c736af8a9091fd9ea6f4d6"
+  "hash": "ec66a5e31a21e07f2e8f8896263958b90a56cae621165202f7acb193944478c7"
 }

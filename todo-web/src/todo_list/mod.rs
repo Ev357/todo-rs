@@ -4,7 +4,7 @@ use todo_api::api::todo::{
     id::{delete_todo, patch_todo},
     post_todos, query_todos,
 };
-use todo_server::db::todo::{CreateTodo, PatchTodo, Todo, TodoQuery};
+use todo_server::db::todo::{CreateTodo, PatchTodo, Todo, TodoQuery, Uuid};
 
 use crate::{
     components::skeleton::Skeleton,
@@ -61,14 +61,14 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
 
             list.into_iter()
                 .map(|todo| (todo.id, todo))
-                .collect::<IndexMap<i64, Todo>>()
+                .collect::<IndexMap<Uuid, Todo>>()
         }
     })?;
 
     let mut update_todo = use_action(patch_todo);
     let mut remove_todo = use_action(delete_todo);
 
-    let handle_toggle = use_callback(move |todo_id: i64| {
+    let handle_toggle = use_callback(move |todo_id: Uuid| {
         let prev_completed = mutate_todo(&mut todos, todo_id, |item| {
             let prev = item.is_completed;
             item.is_completed = !prev;
@@ -103,7 +103,7 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
         });
     });
 
-    let handle_delete = use_callback(move |todo_id: i64| {
+    let handle_delete = use_callback(move |todo_id: Uuid| {
         let fut = remove_todo.call(todo_id);
         spawn(async move {
             fut.await;
@@ -132,8 +132,8 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
 }
 
 fn mutate_todo<R>(
-    todos: &mut Resource<IndexMap<i64, Todo>>,
-    id: i64,
+    todos: &mut Resource<IndexMap<Uuid, Todo>>,
+    id: Uuid,
     f: impl FnOnce(&mut Todo) -> R,
 ) -> Option<R> {
     todos.write().as_mut()?.get_mut(&id).map(f)

@@ -1,12 +1,12 @@
 {
   "db_name": "SQLite",
-  "query": "\n        INSERT INTO todos (title, is_completed, created_at)\n        VALUES (?, ?, ?)\n        RETURNING id, title, is_completed, created_at\n        ",
+  "query": "\n        SELECT id as \"id!: Uuid\", title, is_completed, created_at\n        FROM todos\n        WHERE id = ?\n        ",
   "describe": {
     "columns": [
       {
-        "name": "id",
+        "name": "id!: Uuid",
         "ordinal": 0,
-        "type_info": "Integer",
+        "type_info": "Text",
         "origin": {
           "Table": {
             "table": "todos",
@@ -49,14 +49,14 @@
       }
     ],
     "parameters": {
-      "Right": 3
+      "Right": 1
     },
     "nullable": [
-      false,
+      true,
       false,
       false,
       false
     ]
   },
-  "hash": "8fa893d0858e2f7fa289672fe977c26ea167f2a97976fe8ac020827a23168ba3"
+  "hash": "2b1fb554a2c6bee79f486975608ab094a24d8cda9b6e1e6f4de1cc3297301ea7"
 }

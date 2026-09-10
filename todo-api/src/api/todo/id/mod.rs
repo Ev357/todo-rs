@@ -1,8 +1,8 @@
 use dioxus::prelude::*;
-use todo_server::db::todo::{PatchTodo, Todo};
+use todo_server::db::todo::{PatchTodo, Todo, Uuid};
 
 #[patch("/api/todo/{id}")]
-pub async fn patch_todo(id: i64, data: PatchTodo) -> Result<Todo, ServerFnError> {
+pub async fn patch_todo(id: Uuid, data: PatchTodo) -> Result<Todo, ServerFnError> {
     let client = reqwest::Client::new();
 
     let response = client
@@ -23,7 +23,7 @@ pub async fn patch_todo(id: i64, data: PatchTodo) -> Result<Todo, ServerFnError>
 }
 
 #[delete("/api/todo/{id}")]
-pub async fn delete_todo(id: i64) -> Result<(), ServerFnError> {
+pub async fn delete_todo(id: Uuid) -> Result<(), ServerFnError> {
     let client = reqwest::Client::new();
 
     client

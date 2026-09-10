@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use todo_server::db::todo::Todo;
+use todo_server::db::todo::{Todo, Uuid};
 
 use crate::{
     components::{
@@ -10,7 +10,7 @@ use crate::{
 };
 
 #[component]
-pub fn TodoItem(todo: Todo, ontoggle: EventHandler<i64>, ondelete: EventHandler<i64>) -> Element {
+pub fn TodoItem(todo: Todo, ontoggle: EventHandler<Uuid>, ondelete: EventHandler<Uuid>) -> Element {
     let todo_id = todo.id;
     let is_completed = todo.is_completed;
     let title = &todo.title;

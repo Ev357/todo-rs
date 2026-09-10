@@ -1,5 +1,6 @@
 use axum::{Json, Router, extract::State, http::StatusCode, routing::get};
 use sqlx::QueryBuilder;
+use uuid::Uuid;
 
 use crate::{
     api_context::ApiContext,
@@ -21,9 +22,9 @@ async fn get_todos(
     let todos = sqlx::query_as!(
         Todo,
         r#"
-        SELECT id, title, is_completed, created_at
+        SELECT id as "id!: Uuid", title, is_completed, created_at
         FROM todos
-        ORDER BY created_at
+        ORDER BY is_completed ASC, created_at DESC
         "#
     )
     .fetch_all(&db)
@@ -51,7 +52,7 @@ async fn query_todos(
         builder.push_bind(completed);
     }
 
-    builder.push(" ORDER BY created_at");
+    builder.push(" ORDER BY is_completed ASC, created_at DESC");
 
     let todos = builder
         .build_query_as::<Todo>()
@@ -72,13 +73,15 @@ async fn post_todo(
         return Err(StatusCode::BAD_REQUEST);
     }
 
+    let id = Uuid::new_v4();
     let todo = sqlx::query_as!(
         Todo,
         r#"
-        INSERT INTO todos (title, is_completed)
-        VALUES (?, ?)
-        RETURNING id, title, is_completed, created_at
+        INSERT INTO todos (id, title, is_completed)
+        VALUES (?, ?, ?)
+        RETURNING id as "id!: Uuid", title, is_completed, created_at
         "#,
+        id,
         title,
         payload.is_completed
     )

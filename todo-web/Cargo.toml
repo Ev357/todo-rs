@@ -16,6 +16,7 @@ serde_json = { workspace = true, optional = true }
 serde_urlencoded = { workspace = true, optional = true }
 tower = { workspace = true, optional = true }
 indexmap = { workspace = true }
+uuid = { workspace = true }
 
 [features]
 default = []

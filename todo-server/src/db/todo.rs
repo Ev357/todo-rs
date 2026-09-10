@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+pub use uuid::Uuid;
 
 use crate::define_entity;
 
@@ -6,7 +7,7 @@ define_entity!(
     CreateTodo,
     PatchTodo,
     Todo {
-        id: i64,
+        id: Uuid,
         title: String,
         is_completed: bool,
         #[server]

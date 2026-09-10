@@ -8,6 +8,7 @@ workspace = true
 
 [dependencies]
 todo-server = { workspace = true, default-features = false }
+uuid = { workspace = true }
 
 dioxus = { workspace = true, features = ["fullstack"] }
 reqwest = { workspace = true, optional = true }

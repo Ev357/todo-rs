@@ -1,12 +1,12 @@
 {
   "db_name": "SQLite",
-  "query": "\n        UPDATE todos\n        SET\n            title = ?,\n            is_completed = ?,\n            created_at = ?\n        WHERE id = ?\n        RETURNING id, title, is_completed, created_at\n        ",
+  "query": "\n        UPDATE todos\n        SET\n            title = ?,\n            is_completed = ?\n        WHERE id = ?\n        RETURNING id as \"id!: Uuid\", title, is_completed, created_at\n        ",
   "describe": {
     "columns": [
       {
-        "name": "id",
+        "name": "id!: Uuid",
         "ordinal": 0,
-        "type_info": "Integer",
+        "type_info": "Text",
         "origin": {
           "Table": {
             "table": "todos",
@@ -49,14 +49,14 @@
       }
     ],
     "parameters": {
-      "Right": 4
+      "Right": 3
     },
     "nullable": [
-      false,
+      true,
       false,
       false,
       false
     ]
   },
-  "hash": "e07b74c0dcc99cd72db22fa3e7f93ac76159d91930066767d6444f77614134ca"
+  "hash": "8aa1eb0810b97579e7e4dc5877682d15d4e172a322c3b23908e3861024ea0954"
 }

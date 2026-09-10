@@ -22,7 +22,7 @@ todo-server = { path = "todo-server", default-features = false }
 todo-api = { path = "todo-api" }
 
 dioxus = { git = "https://github.com/Ev357/dioxus", branch = "feat/query-method" }
-sqlx = { version = "0.9.0", features = ["sqlite", "runtime-tokio"] }
+sqlx = { version = "0.9.0", features = ["sqlite", "runtime-tokio", "uuid"] }
 tokio = { version = "1.53.1", features = ["full"] }
 color-eyre = "0.6.5"
 serde = { version = "1.0.229", features = ["derive"] }
@@ -32,6 +32,7 @@ axum = { git = "https://github.com/tokio-rs/axum", features = ["macros"] }
 tower = "0.5.3"
 reqwest = { version = "0.13.4", features = ["json"] }
 indexmap = { version = "2.14.2", features = ["serde"] }
+uuid = { version = "1.26.1", features = ["serde"] }
 
 [workspace.lints.clippy]
 wildcard_imports = "deny"
