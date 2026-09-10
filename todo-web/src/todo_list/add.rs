@@ -13,7 +13,7 @@ pub fn AddItem(onadd: EventHandler<String>) -> Element {
         form {
             action: "/api/todo",
             method: "POST",
-            class: "group flex items-center gap-4 rounded-xl border border-dashed border-border bg-card p-4 transition focus-within:border-foreground/30",
+            class: "flex items-center gap-4 rounded-xl border border-dashed border-border bg-card p-4 transition focus-within:border-foreground/30",
             onsubmit: move |event: FormEvent| {
                 event.prevent_default();
                 let trimmed = title.read().trim().to_string();
