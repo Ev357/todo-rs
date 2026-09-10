@@ -93,6 +93,7 @@ pub fn Button(
     #[props(default)] variant: ButtonVariant,
     #[props(default)] size: ButtonSize,
     #[props(default = false)] disabled: bool,
+    #[props(default = "button".to_string())] r#type: String,
     onclick: Option<EventHandler<MouseEvent>>,
     onfocus: Option<EventHandler<FocusEvent>>,
     onblur: Option<EventHandler<FocusEvent>>,
@@ -110,9 +111,11 @@ pub fn Button(
         None => format!("{BASE_STYLES} {variant_classes} {size_classes}"),
     };
 
+    let button_type = r#type;
+
     rsx! {
         button {
-            r#type: "button",
+            r#type: button_type,
             "data-slot": "button",
             disabled: disabled,
             class: computed_class,

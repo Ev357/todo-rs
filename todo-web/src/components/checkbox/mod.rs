@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 
 use crate::icons::{check::CheckIcon, minus::MinusIcon};
 
-const STYLES: &str = "\
+const BASE_STYLES: &str = "\
     flex size-4 items-center justify-center rounded-[4px] border border-input shadow-xs \
     transition-shadow group-has-disabled/field:opacity-50 \
     group-has-[:focus-visible]/field-label:ring-0 \
@@ -33,8 +33,8 @@ pub fn Checkbox(
     children: Element,
 ) -> Element {
     let class = match class {
-        Some(custom) => format!("{STYLES} {custom}"),
-        None => STYLES.to_string(),
+        Some(custom) => format!("{BASE_STYLES} {custom}"),
+        None => BASE_STYLES.to_string(),
     };
 
     let data_state = if indeterminate {

@@ -43,10 +43,7 @@ fn App() -> Element {
                     value: search_term,
                 }
 
-                SuspenseBoundary {
-                    fallback: |_| rsx! { p { class: "text-muted-foreground text-sm", "Loading..." } },
-                    TodoList { search: search_term }
-                }
+                TodoList { search: search_term }
             }
         }
     }

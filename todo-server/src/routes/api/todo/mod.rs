@@ -67,16 +67,20 @@ async fn post_todo(
     State(ApiContext { db }): State<ApiContext>,
     Json(payload): Json<CreateTodo>,
 ) -> Result<(StatusCode, Json<Todo>), StatusCode> {
+    let title = payload.title.trim();
+    if title.is_empty() {
+        return Err(StatusCode::BAD_REQUEST);
+    }
+
     let todo = sqlx::query_as!(
         Todo,
         r#"
-        INSERT INTO todos (title, is_completed, created_at)
-        VALUES (?, ?, ?)
+        INSERT INTO todos (title, is_completed)
+        VALUES (?, ?)
         RETURNING id, title, is_completed, created_at
         "#,
-        payload.title,
-        payload.is_completed,
-        payload.created_at
+        title,
+        payload.is_completed
     )
     .fetch_one(&db)
     .await

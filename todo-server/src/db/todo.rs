@@ -9,6 +9,7 @@ define_entity!(
         id: i64,
         title: String,
         is_completed: bool,
+        #[server]
         created_at: i64,
     }
 );

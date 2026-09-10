@@ -2,17 +2,52 @@ use dioxus::prelude::*;
 use indexmap::IndexMap;
 use todo_api::api::todo::{
     id::{delete_todo, patch_todo},
-    query_todos,
+    post_todos, query_todos,
 };
-use todo_server::db::todo::{PatchTodo, Todo, TodoQuery};
+use todo_server::db::todo::{CreateTodo, PatchTodo, Todo, TodoQuery};
 
-use crate::todo_list::item::TodoItem;
+use crate::{
+    components::skeleton::Skeleton,
+    todo_list::{add::AddItem, item::TodoItem},
+};
 
+pub mod add;
 mod item;
 
 #[component]
 pub fn TodoList(search: ReadSignal<String>) -> Element {
+    let mut add_action = use_action(post_todos);
+
+    let handle_add = use_callback(move |title: String| {
+        add_action.call(CreateTodo {
+            title,
+            ..Default::default()
+        });
+    });
+
+    rsx! {
+        div {
+            class: "flex flex-col gap-2",
+            role: "list",
+            "aria-label": "Todo list",
+            AddItem { onadd: handle_add },
+            SuspenseBoundary {
+                fallback: |_| rsx! {
+                    for index in 0..4 {
+                        Skeleton { key: "{index}", class: "h-16 rounded-xl" }
+                    }
+                },
+                TodoListData { search, add_action }
+            }
+        }
+    }
+}
+
+#[component]
+fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), Todo>) -> Element {
     let mut todos = use_server_future(move || {
+        let _ = add_action.value();
+
         let query_str = search.read().clone();
         let search_arg = (!query_str.trim().is_empty()).then_some(query_str);
 
@@ -30,68 +65,69 @@ pub fn TodoList(search: ReadSignal<String>) -> Element {
         }
     })?;
 
-    let handle_toggle = move |todo_id: i64| {
+    let mut update_todo = use_action(patch_todo);
+    let mut remove_todo = use_action(delete_todo);
+
+    let handle_toggle = use_callback(move |todo_id: i64| {
         let prev_completed = mutate_todo(&mut todos, todo_id, |item| {
             let prev = item.is_completed;
             item.is_completed = !prev;
             prev
         });
 
-        if let Some(prev) = prev_completed {
-            let next_completed = !prev;
+        let prev = match prev_completed {
+            Some(prev) => prev,
+            None => return,
+        };
+        let next_completed = !prev;
 
-            spawn(async move {
-                let update = PatchTodo {
-                    is_completed: Some(next_completed),
-                    ..Default::default()
-                };
+        let fut = update_todo.call(
+            todo_id,
+            PatchTodo {
+                is_completed: Some(next_completed),
+                ..Default::default()
+            },
+        );
 
-                match patch_todo(todo_id, update).await {
-                    Ok(authoritative) => mutate_todo(&mut todos, todo_id, |t| *t = authoritative),
-                    Err(_) => mutate_todo(&mut todos, todo_id, |t| t.is_completed = prev),
-                };
-            });
-        }
-    };
-
-    let handle_delete = move |todo_id: i64| {
-        let removed = todos.write().as_mut().and_then(|map| {
-            let index = map.get_index_of(&todo_id)?;
-            let (_, todo) = map.shift_remove_entry(&todo_id)?;
-            Some((index, todo))
-        });
-
-        if let Some((original_index, snapshot)) = removed {
-            spawn(async move {
-                if delete_todo(todo_id).await.is_err() {
-                    if let Some(map) = todos.write().as_mut() {
-                        let idx = original_index.min(map.len());
-                        map.shift_insert(idx, todo_id, snapshot);
-                    }
+        spawn(async move {
+            fut.await;
+            match update_todo.value() {
+                Some(Ok(authoritative)) => {
+                    let auth = authoritative.read().clone();
+                    mutate_todo(&mut todos, todo_id, |t| *t = auth);
                 }
-            });
-        }
-    };
-
-    let todos_lock = todos.read();
-    match todos_lock.as_ref() {
-        Some(items) if !items.is_empty() => rsx! {
-            div {
-                class: "flex flex-col gap-2",
-                role: "list",
-                "aria-label": "Todo list",
-                for (id, todo) in items.iter() {
-                    TodoItem {
-                        key: "{id}",
-                        todo: todo.clone(),
-                        ontoggle: handle_toggle,
-                        ondelete: handle_delete,
-                    }
+                _ => {
+                    mutate_todo(&mut todos, todo_id, |t| t.is_completed = prev);
                 }
             }
-        },
-        Some(_) => rsx! { p { class: "text-muted-foreground text-sm", "No todos found." } },
-        None => rsx! { p { class: "text-muted-foreground text-sm", "Loading..." } },
+        });
+    });
+
+    let handle_delete = use_callback(move |todo_id: i64| {
+        let fut = remove_todo.call(todo_id);
+        spawn(async move {
+            fut.await;
+            if matches!(remove_todo.value(), Some(Ok(_))) {
+                todos.restart();
+            }
+        });
+    });
+
+    let todos = todos.suspend()?;
+    let todos = todos.read();
+    rsx! {
+        if !todos.is_empty() {
+            for (id, todo) in todos.iter() {
+                TodoItem {
+                    key: "{id}",
+                    todo: todo.clone(),
+                    ontoggle: handle_toggle,
+                    ondelete: handle_delete,
+                }
+            }
+        } else {
+            p { class: "text-muted-foreground text-sm", "No todos found." }
+        }
     }
 }
 

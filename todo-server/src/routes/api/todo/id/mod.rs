@@ -54,14 +54,12 @@ async fn put_todo(
         UPDATE todos
         SET
             title = ?,
-            is_completed = ?,
-            created_at = ?
+            is_completed = ?
         WHERE id = ?
         RETURNING id, title, is_completed, created_at
         "#,
         payload.title,
         payload.is_completed,
-        payload.created_at,
         id
     )
     .fetch_optional(&db)
@@ -84,14 +82,12 @@ async fn patch_todo(
         UPDATE todos
         SET
             title = COALESCE(?, title),
-            is_completed = COALESCE(?, is_completed),
-            created_at = COALESCE(?, created_at)
+            is_completed = COALESCE(?, is_completed)
         WHERE id = ?
         RETURNING id, title, is_completed, created_at
         "#,
         payload.title,
         payload.is_completed,
-        payload.created_at,
         id
     )
     .fetch_optional(&db)

@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-const STYLES: &str = "\
+const BASE_STYLES: &str = "\
     h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-2.5 py-1 \
     text-base shadow-xs transition-[color,box-shadow] md:text-sm \
     outline-none placeholder:text-muted-foreground \
@@ -37,8 +37,8 @@ pub fn Input(
     children: Element,
 ) -> Element {
     let class = match class {
-        Some(custom) => format!("{STYLES} {custom}"),
-        None => STYLES.to_string(),
+        Some(custom) => format!("{BASE_STYLES} {custom}"),
+        None => BASE_STYLES.to_string(),
     };
 
     rsx! {

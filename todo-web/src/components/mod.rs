@@ -1,3 +1,4 @@
 pub mod button;
 pub mod checkbox;
 pub mod input;
+pub mod skeleton;
