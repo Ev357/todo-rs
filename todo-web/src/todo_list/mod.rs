@@ -69,17 +69,15 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
     let mut remove_todo = use_action(delete_todo);
 
     let handle_toggle = use_callback(move |todo_id: Uuid| {
-        let prev_completed = mutate_todo(&mut todos, todo_id, |item| {
-            let prev = item.is_completed;
-            item.is_completed = !prev;
-            prev
-        });
+        let current_completed = todos
+            .read()
+            .as_ref()
+            .and_then(|map| map.get(&todo_id).map(|t| t.is_completed));
 
-        let prev = match prev_completed {
-            Some(prev) => prev,
+        let next_completed = match current_completed {
+            Some(completed) => !completed,
             None => return,
         };
-        let next_completed = !prev;
 
         let fut = update_todo.call(
             todo_id,
@@ -91,14 +89,8 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
 
         spawn(async move {
             fut.await;
-            match update_todo.value() {
-                Some(Ok(authoritative)) => {
-                    let auth = authoritative.read().clone();
-                    mutate_todo(&mut todos, todo_id, |t| *t = auth);
-                }
-                _ => {
-                    mutate_todo(&mut todos, todo_id, |t| t.is_completed = prev);
-                }
+            if matches!(update_todo.value(), Some(Ok(_))) {
+                todos.restart();
             }
         });
     });
@@ -129,12 +121,4 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
             p { class: "text-muted-foreground text-sm", "No todos found." }
         }
     }
-}
-
-fn mutate_todo<R>(
-    todos: &mut Resource<IndexMap<Uuid, Todo>>,
-    id: Uuid,
-    f: impl FnOnce(&mut Todo) -> R,
-) -> Option<R> {
-    todos.write().as_mut()?.get_mut(&id).map(f)
 }
