@@ -33,6 +33,7 @@ tower = "0.5.3"
 reqwest = { version = "0.13.4", features = ["json"] }
 indexmap = { version = "2.14.2", features = ["serde"] }
 uuid = { version = "1.26.1", features = ["serde"] }
+gloo-timers = { version = "0.4.0", features = ["futures"] }
 
 [workspace.lints.clippy]
 wildcard_imports = "deny"

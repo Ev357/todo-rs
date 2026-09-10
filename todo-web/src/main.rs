@@ -1,9 +1,11 @@
 use dioxus::prelude::*;
+use serde::{Deserialize, Serialize};
 
-use crate::{components::input::Input, head_meta::HeadMeta, todo_list::TodoList};
+use crate::{head_meta::HeadMeta, home::Home};
 
 mod components;
 mod head_meta;
+mod home;
 mod icons;
 #[cfg(feature = "server")]
 mod method_spoofing_layer;
@@ -28,23 +30,16 @@ fn main() {
     dioxus::launch(App);
 }
 
+#[derive(Clone, Routable, Debug, PartialEq, Serialize, Deserialize)]
+pub enum Route {
+    #[route("/?:search")]
+    Home { search: String },
+}
+
 #[component]
 fn App() -> Element {
-    let mut search_term = use_signal(String::new);
-
     rsx! {
         HeadMeta {}
-
-        div { class: "flex min-h-screen w-full justify-center px-4 pt-8 pb-4",
-            div { class: "flex w-full max-w-4xl flex-col gap-4",
-                Input {
-                    oninput: move |e: FormEvent| search_term.set(e.value()),
-                    placeholder: "Search...",
-                    value: search_term,
-                }
-
-                TodoList { search: search_term }
-            }
-        }
+        Router::<Route> {}
     }
 }
