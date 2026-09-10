@@ -34,7 +34,7 @@ pub fn TodoList(search: ReadSignal<String>) -> Element {
             SuspenseBoundary {
                 fallback: |_| rsx! {
                     for index in 0..4 {
-                        Skeleton { key: "{index}", class: "h-16 rounded-xl" }
+                        Skeleton { key: "{index}", class: "h-[66px] rounded-xl" }
                     }
                 },
                 TodoListData { search, add_action }
