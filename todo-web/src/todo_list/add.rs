@@ -16,6 +16,9 @@ pub fn AddItem(onadd: EventHandler<String>, pending: bool) -> Element {
             class: "group flex items-center gap-4 rounded-xl border border-dashed border-border bg-card p-4 transition focus-within:border-foreground/30",
             onsubmit: move |event: FormEvent| {
                 event.prevent_default();
+                if pending {
+                    return;
+                }
                 let trimmed = title.read().trim().to_string();
                 if !trimmed.is_empty() {
                     onadd.call(trimmed);
@@ -41,7 +44,6 @@ pub fn AddItem(onadd: EventHandler<String>, pending: bool) -> Element {
                 placeholder: "Add a new task...",
                 value: title,
                 required: true,
-                disabled: pending,
                 class: "min-w-0 grow bg-transparent text-sm placeholder:text-muted-foreground outline-none",
                 oninput: move |event: FormEvent| title.set(event.value()),
             }
