@@ -343,9 +343,6 @@
   .bg-clip-padding {
     background-clip: padding-box;
   }
-  .stroke-\[1\.5\] {
-    stroke-width: 1.5;
-  }
   .p-4 {
     padding: calc(var(--spacing) * 4);
   }
