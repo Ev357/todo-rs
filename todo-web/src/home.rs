@@ -15,6 +15,10 @@ pub fn Home(search: SearchQuery) -> Element {
     let mut debounce_task = use_signal(|| None::<dioxus_core::Task>);
     let nav = use_navigator();
 
+    use_hook(|| {
+        let _ = document::eval(include_str!("./search_shortcut.js"));
+    });
+
     use_effect(use_reactive!(|(search)| {
         if *search_term.read() == search.search {
             return;
