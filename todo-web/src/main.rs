@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use serde::{Deserialize, Serialize};
 
-use crate::{head_meta::HeadMeta, home::Home};
+use crate::{head_meta::HeadMeta, home::Home, search_query::SearchQuery};
 
 mod components;
 mod head_meta;
@@ -9,6 +9,7 @@ mod home;
 mod icons;
 #[cfg(feature = "server")]
 mod method_spoofing_layer;
+mod search_query;
 mod todo_list;
 
 fn main() {
@@ -32,8 +33,8 @@ fn main() {
 
 #[derive(Clone, Routable, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Route {
-    #[route("/?:search")]
-    Home { search: String },
+    #[route("/?:..query")]
+    Home { query: SearchQuery },
 }
 
 #[component]

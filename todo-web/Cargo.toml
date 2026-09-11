@@ -13,7 +13,7 @@ todo-server = { workspace = true, default-features = false }
 dioxus = { workspace = true, features = ["router", "fullstack"] }
 serde = { workspace = true }
 serde_json = { workspace = true, optional = true }
-serde_urlencoded = { workspace = true, optional = true }
+serde_urlencoded = { workspace = true }
 tower = { workspace = true, optional = true }
 indexmap = { workspace = true }
 uuid = { workspace = true }
@@ -28,6 +28,5 @@ server = [
   "dioxus/server",
   "todo-api/server",
   "dep:serde_json",
-  "dep:serde_urlencoded",
   "dep:tower",
 ]

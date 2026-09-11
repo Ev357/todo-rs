@@ -4,26 +4,26 @@ use crate::{
     components::input::Input,
     icons::{loader::LoaderIcon, search::SearchIcon},
     todo_list::TodoList,
-    Route,
+    Route, SearchQuery,
 };
 
 #[component]
-pub fn Home(search: String) -> Element {
-    let mut input_text = use_signal(|| search.clone());
-    let mut query = use_signal(|| search.clone());
+pub fn Home(query: SearchQuery) -> Element {
+    let mut input_text = use_signal(|| query.search.clone());
+    let mut search_term = use_signal(|| query.search.clone());
     let mut debounce_task = use_signal(|| None::<dioxus_core::Task>);
     let nav = use_navigator();
 
-    use_effect(use_reactive!(|(search)| {
-        if *query.read() == search {
+    use_effect(use_reactive!(|(query)| {
+        if *search_term.read() == query.search {
             return;
         }
 
-        input_text.set(search.clone());
-        query.set(search);
+        input_text.set(query.search.clone());
+        search_term.set(query.search);
     }));
 
-    let is_loading = debounce_task.read().is_some() || *input_text.read() != *query.read();
+    let is_loading = debounce_task.read().is_some() || *input_text.read() != *search_term.read();
 
     rsx! {
         div { class: "flex min-h-screen w-full justify-center px-4 pt-8 pb-4",
@@ -59,8 +59,10 @@ pub fn Home(search: String) -> Element {
                                 #[cfg(target_arch = "wasm32")]
                                 gloo_timers::future::TimeoutFuture::new(300).await;
 
-                                query.set(value.clone());
-                                nav.replace(Route::Home { search: value });
+                                search_term.set(value.clone());
+                                nav.replace(Route::Home {
+                                    query: SearchQuery { search: value },
+                                });
                                 debounce_task.set(None);
                             });
 
@@ -82,15 +84,17 @@ pub fn Home(search: String) -> Element {
                 }
 
                 TodoList {
-                    search: query,
+                    search: search_term,
                     onadd: move |_| {
                         if let Some(task) = debounce_task.take() {
                             task.cancel();
                         }
                         input_text.set(String::new());
-                        query.set(String::new());
+                        search_term.set(String::new());
                         nav.replace(Route::Home {
-                            search: String::new(),
+                            query: SearchQuery {
+                                search: String::new(),
+                            },
                         });
                     },
                 }
