@@ -117,6 +117,25 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
         });
     });
 
+    let handle_edit = use_callback(move |(todo_id, new_title): (Uuid, String)| {
+        updating_id.set(Some(todo_id));
+        let future = update_todo.call(
+            todo_id,
+            PatchTodo {
+                title: Some(new_title),
+                ..Default::default()
+            },
+        );
+
+        spawn(async move {
+            future.await;
+            if matches!(update_todo.value(), Some(Ok(_))) {
+                todos.restart();
+            }
+            updating_id.set(None);
+        });
+    });
+
     let handle_delete = use_callback(move |todo_id: Uuid| {
         deleting_id.set(Some(todo_id));
         let future = remove_todo.call(todo_id);
@@ -143,6 +162,7 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
                         todo: todo.clone(),
                         ontoggle: handle_toggle,
                         ondelete: handle_delete,
+                        onedit: handle_edit,
                         is_updating: active_updating == Some(*id),
                         is_deleting: active_deleting == Some(*id),
                     }

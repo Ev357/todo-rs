@@ -22,6 +22,7 @@ pub fn Checkbox(
     class: Option<String>,
     #[props(default = false)] checked: bool,
     #[props(default = false)] indeterminate: bool,
+    #[props(default = "button".to_string())] r#type: String,
     #[props(extends = GlobalAttributes)]
     #[props(extends = button)]
     attributes: Vec<Attribute>,
@@ -40,9 +41,11 @@ pub fn Checkbox(
         "unchecked"
     };
 
+    let button_type = r#type;
+
     rsx! {
         button {
-            r#type: "button",
+            r#type: button_type,
             role: "checkbox",
             "data-slot": "checkbox",
             "data-state": data_state,
