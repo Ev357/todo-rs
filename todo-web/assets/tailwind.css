@@ -581,6 +581,16 @@
       }
     }
   }
+  .hover\:border-foreground\/30 {
+    &:hover {
+      @media (hover: hover) {
+        border-color: var(--foreground);
+        @supports (color: color-mix(in lab, red, red)) {
+          border-color: color-mix(in oklab, var(--foreground) 30%, transparent);
+        }
+      }
+    }
+  }
   .hover\:bg-\[color-mix\(in_oklch\,var\(--secondary\)\,var\(--foreground\)_5\%\)\] {
     &:hover {
       @media (hover: hover) {

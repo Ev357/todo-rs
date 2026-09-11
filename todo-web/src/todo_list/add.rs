@@ -13,7 +13,7 @@ pub fn AddItem(onadd: EventHandler<String>, pending: bool) -> Element {
         form {
             action: "/api/todo",
             method: "POST",
-            class: "group flex items-center gap-4 rounded-xl border border-dashed border-border bg-card p-4 transition focus-within:border-foreground/30",
+            class: "group border-border bg-card hover:border-foreground/30 focus-within:border-foreground/30 flex items-center gap-4 rounded-xl border border-dashed p-4 transition",
             onsubmit: move |event: FormEvent| {
                 event.prevent_default();
                 if pending {
