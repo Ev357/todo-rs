@@ -72,13 +72,13 @@ pub fn Home(search: SearchQuery) -> Element {
                     }
                     div {
                         class: "pointer-events-none absolute inset-y-0 start-0 flex items-center ps-2.5",
-                        if is_loading {
-                            LoaderIcon {
-                                class: "size-4 shrink-0 animate-spin text-muted-foreground",
-                            }
-                        } else {
+                        if !is_loading {
                             SearchIcon {
                                 class: "size-4 shrink-0 text-muted-foreground",
+                            }
+                        } else {
+                            LoaderIcon {
+                                class: "size-4 shrink-0 animate-spin text-muted-foreground",
                             }
                         }
                     }
