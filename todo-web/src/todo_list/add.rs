@@ -13,7 +13,7 @@ pub fn AddItem(onadd: EventHandler<String>, pending: bool) -> Element {
         form {
             action: "/api/todo",
             method: "POST",
-            class: "flex items-center gap-4 rounded-xl border border-dashed border-border bg-card p-4 transition focus-within:border-foreground/30",
+            class: "group flex items-center gap-4 rounded-xl border border-dashed border-border bg-card p-4 transition focus-within:border-foreground/30",
             onsubmit: move |event: FormEvent| {
                 event.prevent_default();
                 let trimmed = title.read().trim().to_string();
@@ -52,6 +52,7 @@ pub fn AddItem(onadd: EventHandler<String>, pending: bool) -> Element {
                 variant: ButtonVariant::Outline,
                 size: ButtonSize::IconSm,
                 disabled: pending,
+                class: "invisible group-focus-within:visible group-hover:visible focus-visible:visible",
                 if !pending {
                     PlusIcon {}
                 } else {
