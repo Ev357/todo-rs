@@ -1,5 +1,5 @@
 {
-  description = "todo";
+  description = "todo-rs";
 
   nixConfig = {
     extra-substituters = [
@@ -19,6 +19,10 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    dioxus = {
+      url = "github:Ev357/dioxus/feat/query-method";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -26,6 +30,7 @@
     nixpkgs,
     crane,
     fenix,
+    dioxus,
     ...
   }: let
     forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
@@ -40,8 +45,14 @@
 
       toolchain = pkgs.callPackage ./nix/toolchain.nix {};
       craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
+
+      wasm-bindgen-cli = self.packages.${system}.wasm-bindgen-cli;
+      dioxus-cli = self.packages.${system}.dioxus-cli;
     in {
       todo-server = pkgs.callPackage ./nix/todo-server.nix {inherit craneLib;};
+      todo-web = pkgs.callPackage ./nix/todo-web.nix {inherit craneLib wasm-bindgen-cli dioxus-cli;};
+      wasm-bindgen-cli = pkgs.callPackage ./nix/wasm-bindgen-cli.nix {inherit craneLib;};
+      dioxus-cli = dioxus.packages.${system}.dioxus-cli;
     });
 
     devShells = forAllSystems (system: let
@@ -52,8 +63,11 @@
 
       toolchain = pkgs.callPackage ./nix/toolchain.nix {};
       craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
+
+      wasm-bindgen-cli = self.packages.${system}.wasm-bindgen-cli;
+      dioxus-cli = self.packages.${system}.dioxus-cli;
     in {
-      default = pkgs.callPackage ./nix/shell.nix {inherit craneLib;};
+      default = pkgs.callPackage ./nix/shell.nix {inherit craneLib wasm-bindgen-cli dioxus-cli;};
     });
   };
 }

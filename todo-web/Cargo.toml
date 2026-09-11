@@ -1,7 +1,13 @@
 [package]
 name = "todo-web"
-version = "0.1.0"
-edition = "2021"
+description = "Web server for todo-rs"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [lints]
 workspace = true
@@ -24,9 +30,4 @@ gloo-timers = { workspace = true }
 [features]
 default = []
 web = ["dioxus/web"]
-server = [
-  "dioxus/server",
-  "todo-api/server",
-  "dep:serde_json",
-  "dep:tower",
-]
+server = ["dioxus/server", "todo-api/server", "dep:serde_json", "dep:tower"]

@@ -9,10 +9,23 @@ members = [
   "todo-server",
 ]
 
+[workspace.package]
+edition = "2024"
+version = "0.1.0"
+license = "MIT"
+authors = ["Lucas Gager <evest.dev@gmail.com>"]
+homepage = "https://github.com/Ev357/todo-rs"
+repository = "https://github.com/Ev357/todo-rs"
+rust-version = "1.100.0"
+
 [profile.release]
-codegen-units = 1
+opt-level = "z"
+debug = false
 lto = true
-strip = true
+codegen-units = 1
+panic = "abort"
+strip = "debuginfo"
+incremental = false
 
 [profile.dev.package."*"]
 debug = false

@@ -7,9 +7,9 @@ use std::{
 use dioxus::{
     fullstack::response::IntoResponse,
     server::axum::{
-        body::{to_bytes, Body},
+        body::{Body, to_bytes},
         extract::Request,
-        http::{header, Method, StatusCode},
+        http::{Method, StatusCode, header},
         response::Response,
     },
 };
@@ -87,19 +87,21 @@ where
             let mut redirect_override = None;
             let mut payload_map = serde_json::Map::new();
 
-            for (key, val) in pairs {
+            for (key, value) in pairs {
                 if key == "_method" {
-                    overridden_method = Method::from_bytes(val.trim().as_bytes()).ok();
+                    overridden_method = Method::from_bytes(value.trim().as_bytes()).ok();
                     continue;
                 }
                 if key == "_redirect" {
-                    redirect_override = Some(val);
+                    redirect_override = Some(value);
                     continue;
                 }
 
-                let json_val = match val.as_str() {
+                let json_value = match value.as_str() {
                     "on" => serde_json::Value::Bool(true),
-                    s => serde_json::from_str(s).unwrap_or(serde_json::Value::String(val)),
+                    string => {
+                        serde_json::from_str(string).unwrap_or(serde_json::Value::String(value))
+                    }
                 };
 
                 if let Some((root, subkey)) = key.split_once('[') {
@@ -109,11 +111,11 @@ where
                         .entry(root.to_string())
                         .or_insert_with(|| serde_json::Value::Object(serde_json::Map::new()));
 
-                    if let serde_json::Value::Object(ref mut map) = target_object {
-                        map.insert(clean_sub.to_string(), json_val);
+                    if let serde_json::Value::Object(map) = target_object {
+                        map.insert(clean_sub.to_string(), json_value);
                     }
                 } else {
-                    payload_map.insert(key, json_val);
+                    payload_map.insert(key, json_value);
                 }
             }
 

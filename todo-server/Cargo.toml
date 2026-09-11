@@ -1,7 +1,13 @@
 [package]
 name = "todo-server"
-version = "0.1.0"
-edition = "2024"
+description = "Server for todo-rs"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [lints]
 workspace = true
@@ -16,13 +22,7 @@ axum = { workspace = true, optional = true }
 
 [features]
 default = ["server"]
-server = [
-    "sqlx",
-    "dep:tokio",
-    "dep:color-eyre",
-    "dep:axum",
-    "uuid/v4",
-]
+server = ["sqlx", "dep:tokio", "dep:color-eyre", "dep:axum", "uuid/v4"]
 sqlx = ["dep:sqlx"]
 
 [[bin]]

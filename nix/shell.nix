@@ -15,6 +15,10 @@
   taplo,
   webkitgtk_4_1,
   xdotool,
+  wasm-bindgen-cli,
+  dioxus-cli,
+  esbuild,
+  binaryen,
 }: let
   runtimeLibs = [
     at-spi2-core
@@ -36,6 +40,10 @@ in
         rust-analyzer-nightly
         taplo
         pkg-config
+        wasm-bindgen-cli
+        dioxus-cli
+        esbuild
+        binaryen
       ]
       ++ runtimeLibs;
 

@@ -1,18 +1,24 @@
 [package]
 name = "todo-api"
-version = "0.1.0"
-edition = "2021"
+description = "Dioxus backend api"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [lints]
 workspace = true
 
 [dependencies]
 todo-server = { workspace = true, default-features = false }
-uuid = { workspace = true }
 
 dioxus = { workspace = true, features = ["fullstack"] }
 reqwest = { workspace = true, optional = true }
 serde = { workspace = true }
+uuid = { workspace = true }
 
 [features]
 server = ["dioxus/server", "dep:reqwest"]
