@@ -33,8 +33,8 @@ fn main() {
 
 #[derive(Clone, Routable, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Route {
-    #[route("/?:..query")]
-    Home { query: SearchQuery },
+    #[route("/?:..search")]
+    Home { search: SearchQuery },
 }
 
 #[component]

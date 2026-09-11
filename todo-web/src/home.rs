@@ -3,24 +3,25 @@ use dioxus::prelude::*;
 use crate::{
     components::input::Input,
     icons::{loader::LoaderIcon, search::SearchIcon},
+    search_query::SearchQuery,
     todo_list::TodoList,
-    Route, SearchQuery,
+    Route,
 };
 
 #[component]
-pub fn Home(query: SearchQuery) -> Element {
-    let mut input_text = use_signal(|| query.search.clone());
-    let mut search_term = use_signal(|| query.search.clone());
+pub fn Home(search: SearchQuery) -> Element {
+    let mut input_text = use_signal(|| search.search.clone());
+    let mut search_term = use_signal(|| search.search.clone());
     let mut debounce_task = use_signal(|| None::<dioxus_core::Task>);
     let nav = use_navigator();
 
-    use_effect(use_reactive!(|(query)| {
-        if *search_term.read() == query.search {
+    use_effect(use_reactive!(|(search)| {
+        if *search_term.read() == search.search {
             return;
         }
 
-        input_text.set(query.search.clone());
-        search_term.set(query.search);
+        input_text.set(search.search.clone());
+        search_term.set(search.search);
     }));
 
     let is_loading = debounce_task.read().is_some() || *input_text.read() != *search_term.read();
@@ -61,7 +62,7 @@ pub fn Home(query: SearchQuery) -> Element {
 
                                 search_term.set(value.clone());
                                 nav.replace(Route::Home {
-                                    query: SearchQuery { search: value },
+                                    search: SearchQuery { search: value },
                                 });
                                 debounce_task.set(None);
                             });
@@ -92,7 +93,7 @@ pub fn Home(query: SearchQuery) -> Element {
                         input_text.set(String::new());
                         search_term.set(String::new());
                         nav.replace(Route::Home {
-                            query: SearchQuery {
+                            search: SearchQuery {
                                 search: String::new(),
                             },
                         });
