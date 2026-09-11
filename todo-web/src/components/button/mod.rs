@@ -94,10 +94,6 @@ pub fn Button(
     #[props(default)] size: ButtonSize,
     #[props(default = false)] disabled: bool,
     #[props(default = "button".to_string())] r#type: String,
-    onclick: Option<EventHandler<MouseEvent>>,
-    onfocus: Option<EventHandler<FocusEvent>>,
-    onblur: Option<EventHandler<FocusEvent>>,
-    onkeydown: Option<EventHandler<KeyboardEvent>>,
     #[props(extends = GlobalAttributes)]
     #[props(extends = button)]
     attributes: Vec<Attribute>,
@@ -119,10 +115,6 @@ pub fn Button(
             "data-slot": "button",
             disabled: disabled,
             class: computed_class,
-            onclick: move |e| _ = onclick.map(|cb| cb(e)),
-            onfocus: move |e| _ = onfocus.map(|cb| cb(e)),
-            onblur: move |e| _ = onblur.map(|cb| cb(e)),
-            onkeydown: move |e| _ = onkeydown.map(|cb| cb(e)),
             ..attributes,
 
             {children}

@@ -22,11 +22,6 @@ pub fn Checkbox(
     class: Option<String>,
     #[props(default = false)] checked: bool,
     #[props(default = false)] indeterminate: bool,
-    onchange: Option<EventHandler<FormEvent>>,
-    onclick: Option<EventHandler<MouseEvent>>,
-    onfocus: Option<EventHandler<FocusEvent>>,
-    onblur: Option<EventHandler<FocusEvent>>,
-    onkeydown: Option<EventHandler<KeyboardEvent>>,
     #[props(extends = GlobalAttributes)]
     #[props(extends = button)]
     attributes: Vec<Attribute>,
@@ -54,12 +49,6 @@ pub fn Checkbox(
             "data-checked": checked || indeterminate,
             "aria-checked": if indeterminate { "mixed" } else if checked { "true" } else { "false" },
             class: class,
-            onclick: move |e| _ = onclick.map(|callback| callback(e)),
-            onchange: move |e| _ = onchange.map(|callback| callback(e)),
-            onfocus: move |e| _ = onfocus.map(|callback| callback(e)),
-            onblur: move |e| _ = onblur.map(|callback| callback(e)),
-            onkeydown: move |e| _ = onkeydown.map(|callback| callback(e)),
-            r#type: "button",
             ..attributes,
 
             if checked {

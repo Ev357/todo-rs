@@ -36,10 +36,16 @@ pub fn Home(search: String) -> Element {
                         event.prevent_default();
                     },
                     Input {
+                        r#type: "search",
                         name: "search",
                         placeholder: "Search...",
                         class: "ps-8",
                         value: input_text,
+                        onkeydown: move |event: KeyboardEvent| {
+                            if let Key::Enter = event.key() {
+                                event.prevent_default();
+                            }
+                        },
                         oninput: move |event: FormEvent| {
                             let value = event.value();
                             input_text.set(value.clone());
