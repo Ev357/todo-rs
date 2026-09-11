@@ -10,6 +10,7 @@ Also wanted to try out Dioxus.
 
 ## Development
 - [x] Web support.
+- [ ] Working NixOS support
 - [ ] Cli/Tui support.
 - [ ] Desktop support.
 - [ ] Mobile support.
