@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "\n        SELECT id as \"id!: Uuid\", title, is_completed, created_at\n        FROM todos\n        ORDER BY is_completed ASC, created_at DESC, id DESC\n        ",
+  "query": "\n        SELECT id as \"id!: Uuid\", title, is_completed, created_at\n        FROM todos\n        ORDER BY is_completed ASC, created_at DESC\n        ",
   "describe": {
     "columns": [
       {
@@ -58,5 +58,5 @@
       false
     ]
   },
-  "hash": "ec66a5e31a21e07f2e8f8896263958b90a56cae621165202f7acb193944478c7"
+  "hash": "41580c9c727e2ca8383eaa6baec85b94c2425aef8891f56b2379f23e5449e1dc"
 }
