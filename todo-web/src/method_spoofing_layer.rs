@@ -84,11 +84,16 @@ where
                 serde_urlencoded::from_bytes(&bytes).unwrap_or_default();
 
             let mut overridden_method = None;
+            let mut redirect_override = None;
             let mut payload_map = serde_json::Map::new();
 
             for (key, val) in pairs {
                 if key == "_method" {
                     overridden_method = Method::from_bytes(val.trim().as_bytes()).ok();
+                    continue;
+                }
+                if key == "_redirect" {
+                    redirect_override = Some(val);
                     continue;
                 }
 
@@ -142,15 +147,19 @@ where
 
             let response = inner.call(req).await?;
 
-            if is_form && response.status().is_success() {
-                if let Some(referrer) = referrer {
-                    let mut redirect = Response::builder()
-                        .status(StatusCode::SEE_OTHER)
-                        .body(Body::empty())
-                        .unwrap_or_else(|_| StatusCode::SEE_OTHER.into_response());
-                    redirect.headers_mut().insert(header::LOCATION, referrer);
-                    return Ok(redirect);
-                }
+            if is_form && (response.status().is_success() || response.status().is_redirection()) {
+                let location = redirect_override
+                    .as_deref()
+                    .and_then(|loc| header::HeaderValue::from_str(loc).ok())
+                    .or(referrer)
+                    .unwrap_or_else(|| header::HeaderValue::from_static("/"));
+
+                let mut redirect = Response::builder()
+                    .status(StatusCode::SEE_OTHER)
+                    .body(Body::empty())
+                    .unwrap_or_else(|_| StatusCode::SEE_OTHER.into_response());
+                redirect.headers_mut().insert(header::LOCATION, location);
+                return Ok(redirect);
             }
 
             Ok(response)

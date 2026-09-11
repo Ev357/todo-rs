@@ -25,6 +25,12 @@ pub fn AddItem(onadd: EventHandler<String>, pending: bool) -> Element {
 
             input {
                 r#type: "hidden",
+                name: "_redirect",
+                value: "/",
+            }
+
+            input {
+                r#type: "hidden",
                 name: "data[is_completed]",
                 value: "false",
             }
