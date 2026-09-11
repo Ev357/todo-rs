@@ -1,7 +1,6 @@
 {
-  callPackage,
   lib,
-  mkShell,
+  craneLib,
   at-spi2-core,
   cairo,
   gdk-pixbuf,
@@ -17,7 +16,6 @@
   webkitgtk_4_1,
   xdotool,
 }: let
-  toolchain = callPackage ./toolchain.nix {};
   runtimeLibs = [
     at-spi2-core
     cairo
@@ -32,10 +30,9 @@
     xdotool
   ];
 in
-  mkShell {
+  craneLib.devShell {
     packages =
       [
-        toolchain
         rust-analyzer-nightly
         taplo
         pkg-config
