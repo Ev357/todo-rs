@@ -2,11 +2,11 @@ use dioxus::prelude::*;
 
 use crate::{
     components::button::{Button, ButtonSize, ButtonVariant},
-    icons::plus::PlusIcon,
+    icons::{loader::LoaderIcon, plus::PlusIcon},
 };
 
 #[component]
-pub fn AddItem(onadd: EventHandler<String>) -> Element {
+pub fn AddItem(onadd: EventHandler<String>, pending: bool) -> Element {
     let mut title = use_signal(String::new);
 
     rsx! {
@@ -35,6 +35,7 @@ pub fn AddItem(onadd: EventHandler<String>) -> Element {
                 placeholder: "Add a new task...",
                 value: title,
                 required: true,
+                disabled: pending,
                 class: "min-w-0 grow bg-transparent text-sm placeholder:text-muted-foreground outline-none",
                 oninput: move |event: FormEvent| title.set(event.value()),
             }
@@ -44,7 +45,14 @@ pub fn AddItem(onadd: EventHandler<String>) -> Element {
                 "aria-label": "Add task",
                 variant: ButtonVariant::Outline,
                 size: ButtonSize::IconSm,
-                PlusIcon {}
+                disabled: pending,
+                if !pending {
+                    PlusIcon {}
+                } else {
+                    LoaderIcon {
+                        class: "size-4 shrink-0 animate-spin",
+                    }
+                }
             }
         }
     }

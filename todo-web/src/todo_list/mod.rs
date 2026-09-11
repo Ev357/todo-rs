@@ -32,7 +32,10 @@ pub fn TodoList(search: ReadSignal<String>, onadd: EventHandler<()>) -> Element 
             class: "flex flex-col gap-2",
             role: "list",
             "aria-label": "Todo list",
-            AddItem { onadd: handle_add },
+            AddItem {
+                onadd: handle_add,
+                pending: add_action.pending(),
+            },
             SuspenseBoundary {
                 fallback: |_| rsx! {
                     for index in 0..4 {
@@ -47,7 +50,11 @@ pub fn TodoList(search: ReadSignal<String>, onadd: EventHandler<()>) -> Element 
 
 #[component]
 fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), Todo>) -> Element {
-    let mut todos = use_server_future(move || {
+    let mut cached_resource = use_signal(|| None::<Resource<IndexMap<Uuid, Todo>>>);
+    let mut updating_id = use_signal(|| None::<Uuid>);
+    let mut deleting_id = use_signal(|| None::<Uuid>);
+
+    let res = use_server_future(move || {
         let _ = add_action.value();
 
         let query_str = search.read().clone();
@@ -65,7 +72,18 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
                 .map(|todo| (todo.id, todo))
                 .collect::<IndexMap<Uuid, Todo>>()
         }
-    })?;
+    });
+
+    let mut todos = match res {
+        Ok(todos) => {
+            cached_resource.set(Some(todos));
+            todos
+        }
+        Err(error) => match *cached_resource.read() {
+            Some(todos) => todos,
+            None => return Err(error),
+        },
+    };
 
     let mut update_todo = use_action(patch_todo);
     let mut remove_todo = use_action(delete_todo);
@@ -81,7 +99,8 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
             None => return,
         };
 
-        let fut = update_todo.call(
+        updating_id.set(Some(todo_id));
+        let future = update_todo.call(
             todo_id,
             PatchTodo {
                 is_completed: Some(next_completed),
@@ -90,45 +109,54 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
         );
 
         spawn(async move {
-            fut.await;
+            future.await;
             if matches!(update_todo.value(), Some(Ok(_))) {
                 todos.restart();
             }
+            updating_id.set(None);
         });
     });
 
     let handle_delete = use_callback(move |todo_id: Uuid| {
-        let fut = remove_todo.call(todo_id);
+        deleting_id.set(Some(todo_id));
+        let future = remove_todo.call(todo_id);
         spawn(async move {
-            fut.await;
+            future.await;
             if matches!(remove_todo.value(), Some(Ok(_))) {
                 todos.restart();
             }
+            deleting_id.set(None);
         });
     });
 
-    let todos = todos.suspend()?;
-    let todos = todos.read();
+    let todos_read = todos.read();
+    let items = todos_read.as_ref();
+    let active_updating = *updating_id.read();
+    let active_deleting = *deleting_id.read();
+
     rsx! {
-        if !todos.is_empty() {
-            for (id, todo) in todos.iter() {
-                TodoItem {
-                    key: "{id}",
-                    todo: todo.clone(),
-                    ontoggle: handle_toggle,
-                    ondelete: handle_delete,
+        if let Some(items) = items {
+            if !items.is_empty() {
+                for (id, todo) in items.iter() {
+                    TodoItem {
+                        key: "{id}",
+                        todo: todo.clone(),
+                        ontoggle: handle_toggle,
+                        ondelete: handle_delete,
+                        is_updating: active_updating == Some(*id),
+                        is_deleting: active_deleting == Some(*id),
+                    }
                 }
-            }
-        } else {
-            div {
-                class: "flex flex-col items-center justify-center gap-2 py-12",
-                InboxIcon {
-                    size: 40,
-                    class: "text-muted-foreground/60",
-                }
-                p {
-                    class: "text-muted-foreground text-center text-sm font-medium",
-                    "No todos found"
+            } else {
+                div {
+                    class: "flex flex-col items-center justify-center gap-2 py-12 text-center text-muted-foreground",
+                    InboxIcon {
+                        class: "size-10 text-muted-foreground/60",
+                    }
+                    p {
+                        class: "text-sm font-medium",
+                        "No todos found"
+                    }
                 }
             }
         }

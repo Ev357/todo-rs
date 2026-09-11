@@ -1,6 +1,11 @@
 use dioxus::prelude::*;
 
-use crate::{components::input::Input, todo_list::TodoList, Route};
+use crate::{
+    components::input::Input,
+    icons::{loader::LoaderIcon, search::SearchIcon},
+    todo_list::TodoList,
+    Route,
+};
 
 #[component]
 pub fn Home(search: String) -> Element {
@@ -18,18 +23,22 @@ pub fn Home(search: String) -> Element {
         query.set(search);
     }));
 
+    let is_loading = debounce_task.read().is_some() || *input_text.read() != *query.read();
+
     rsx! {
         div { class: "flex min-h-screen w-full justify-center px-4 pt-8 pb-4",
             div { class: "flex w-full max-w-4xl flex-col gap-4",
                 form {
                     action: "/",
                     method: "GET",
+                    class: "relative flex w-full items-center",
                     onsubmit: move |event: FormEvent| {
                         event.prevent_default();
                     },
                     Input {
                         name: "search",
                         placeholder: "Search...",
+                        class: "ps-8",
                         value: input_text,
                         oninput: move |event: FormEvent| {
                             let value = event.value();
@@ -46,10 +55,23 @@ pub fn Home(search: String) -> Element {
 
                                 query.set(value.clone());
                                 nav.replace(Route::Home { search: value });
+                                debounce_task.set(None);
                             });
 
                             debounce_task.set(Some(new_task));
                         },
+                    }
+                    div {
+                        class: "pointer-events-none absolute inset-y-0 start-0 flex items-center ps-2.5",
+                        if is_loading {
+                            LoaderIcon {
+                                class: "size-4 shrink-0 animate-spin text-muted-foreground",
+                            }
+                        } else {
+                            SearchIcon {
+                                class: "size-4 shrink-0 text-muted-foreground",
+                            }
+                        }
                     }
                 }
 

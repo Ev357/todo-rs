@@ -6,11 +6,17 @@ use crate::{
         button::{Button, ButtonSize, ButtonVariant},
         checkbox::Checkbox,
     },
-    icons::trash::TrashIcon,
+    icons::{loader::LoaderIcon, trash::TrashIcon},
 };
 
 #[component]
-pub fn TodoItem(todo: Todo, ontoggle: EventHandler<Uuid>, ondelete: EventHandler<Uuid>) -> Element {
+pub fn TodoItem(
+    todo: Todo,
+    ontoggle: EventHandler<Uuid>,
+    ondelete: EventHandler<Uuid>,
+    is_updating: bool,
+    is_deleting: bool,
+) -> Element {
     let todo_id = todo.id;
     let is_completed = todo.is_completed;
     let title = &todo.title;
@@ -20,6 +26,8 @@ pub fn TodoItem(todo: Todo, ontoggle: EventHandler<Uuid>, ondelete: EventHandler
     } else {
         ""
     };
+
+    let delete_visibility = if is_deleting { "visible" } else { "invisible" };
 
     rsx! {
         form {
@@ -44,6 +52,7 @@ pub fn TodoItem(todo: Todo, ontoggle: EventHandler<Uuid>, ondelete: EventHandler
                 "aria-label": title.as_str(),
                 name: "_method",
                 value: "PATCH",
+                disabled: is_updating || is_deleting,
                 class: "absolute inset-0 size-full rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 onclick: move |event| {
                     event.prevent_default();
@@ -52,12 +61,18 @@ pub fn TodoItem(todo: Todo, ontoggle: EventHandler<Uuid>, ondelete: EventHandler
             }
 
             div { class: "flex min-w-0 grow items-center gap-4",
-                Checkbox {
-                    checked: is_completed,
-                    class: "pointer-events-none",
-                    tabindex: "-1",
-                    "aria-hidden": "true",
-                    title: if is_completed { "Mark incomplete" } else { "Mark complete" },
+                if !is_updating {
+                    Checkbox {
+                        checked: is_completed,
+                        class: "pointer-events-none",
+                        tabindex: "-1",
+                        "aria-hidden": "true",
+                        title: if is_completed { "Mark incomplete" } else { "Mark complete" },
+                    }
+                } else {
+                    LoaderIcon {
+                        class: "size-4 shrink-0 animate-spin text-muted-foreground",
+                    }
                 }
                 p { class: title_class, {title.as_str()} }
             }
@@ -67,15 +82,22 @@ pub fn TodoItem(todo: Todo, ontoggle: EventHandler<Uuid>, ondelete: EventHandler
                 name: "_method",
                 value: "DELETE",
                 "aria-label": "Delete {title}",
+                disabled: is_updating || is_deleting,
                 variant: ButtonVariant::Destructive,
                 size: ButtonSize::IconSm,
-                class: "invisible z-10 group-hover:visible group-focus-within:visible focus-visible:visible",
+                class: "z-10 group-hover:visible group-focus-within:visible focus-visible:visible {delete_visibility}",
                 onclick: move |event: MouseEvent| {
                     event.prevent_default();
                     event.stop_propagation();
                     ondelete.call(todo_id);
                 },
-                TrashIcon {}
+                if !is_deleting {
+                    TrashIcon {}
+                } else {
+                    LoaderIcon {
+                        class: "size-4 shrink-0 animate-spin",
+                    }
+                }
             }
         }
     }
