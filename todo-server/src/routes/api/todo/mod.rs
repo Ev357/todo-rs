@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use crate::{
     api_context::ApiContext,
-    db::todo::{CreateTodo, Todo, TodoQuery},
+    db::todo::{CreateTodo, QueryTodo, Todo},
 };
 
 pub mod id;
@@ -37,7 +37,7 @@ async fn get_todos(
 #[axum::debug_handler]
 async fn query_todos(
     State(ApiContext { db }): State<ApiContext>,
-    Json(payload): Json<TodoQuery>,
+    Json(payload): Json<QueryTodo>,
 ) -> Result<Json<Vec<Todo>>, StatusCode> {
     let mut builder =
         QueryBuilder::new("SELECT id, title, is_completed, created_at FROM todos WHERE 1 = 1 ");

@@ -4,7 +4,7 @@ use todo_api::api::todo::{
     id::{delete_todo, patch_todo},
     post_todos, query_todos,
 };
-use todo_server::db::todo::{CreateTodo, PatchTodo, Todo, TodoQuery, Uuid};
+use todo_server::db::todo::{CreateTodo, PatchTodo, QueryTodo, Todo, Uuid};
 
 use crate::{
     components::skeleton::Skeleton,
@@ -61,7 +61,7 @@ fn TodoListData(search: ReadSignal<String>, add_action: Action<(CreateTodo,), To
         let search_arg = (!query_str.trim().is_empty()).then_some(query_str);
 
         async move {
-            let list = query_todos(TodoQuery {
+            let list = query_todos(QueryTodo {
                 search: search_arg,
                 is_completed: None,
             })

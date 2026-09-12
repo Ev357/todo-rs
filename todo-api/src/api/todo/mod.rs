@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use todo_server::db::todo::{CreateTodo, Todo, TodoQuery};
+use todo_server::db::todo::{CreateTodo, QueryTodo, Todo};
 
 #[cfg(feature = "server")]
 use crate::client::get_client;
@@ -28,7 +28,7 @@ pub async fn get_todos() -> Result<Vec<Todo>, ServerFnError> {
 }
 
 #[query("/api/todo")]
-pub async fn query_todos(query: TodoQuery) -> Result<Vec<Todo>, ServerFnError> {
+pub async fn query_todos(query: QueryTodo) -> Result<Vec<Todo>, ServerFnError> {
     let api = get_client().await?;
 
     let response = api

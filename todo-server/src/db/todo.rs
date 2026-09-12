@@ -15,8 +15,8 @@ define_entity!(
     }
 );
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct TodoQuery {
+#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
+pub struct QueryTodo {
     pub search: Option<String>,
     pub is_completed: Option<bool>,
 }
