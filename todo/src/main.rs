@@ -23,8 +23,12 @@ async fn main() -> Result<()> {
 
     let cli = Cli::parse();
 
-    let config = Config::new().await;
+    if let Commands::Generate = cli.command {
+        print_completions();
+        return Ok(());
+    }
 
+    let config = Config::new().await;
     let api = ApiClient::new(config.api_url);
 
     match cli.command {
@@ -55,11 +59,7 @@ async fn main() -> Result<()> {
             let todos = query_todo(query, api).await?;
             print_todos(&todos)
         }
-        Commands::Generate => {
-            print_completions();
-
-            Ok(())
-        }
+        Commands::Generate => unreachable!(),
     }?;
 
     Ok(())
