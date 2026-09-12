@@ -3,7 +3,7 @@ use color_eyre::eyre::Result;
 use todo_server::db::todo::{CreateTodo, PatchTodo, QueryTodo};
 
 use crate::{
-    cli::{Cli, Commands},
+    cli::{Cli, Commands, print_completions},
     client::{
         ApiClient, delete::delete_todo, get::get_todo, patch::patch_todo, post::post_todo,
         query::query_todo,
@@ -54,6 +54,11 @@ async fn main() -> Result<()> {
             };
             let todos = query_todo(query, api).await?;
             print_todos(&todos)
+        }
+        Commands::Generate => {
+            print_completions();
+
+            Ok(())
         }
     }?;
 
