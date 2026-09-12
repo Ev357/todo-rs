@@ -4,11 +4,11 @@
   config,
   ...
 }: let
-  cfg = config.programs.template-manager;
+  cfg = config.programs.todo;
 
   tomlFormat = pkgs.formats.toml {};
 in {
-  options.programs.template-manager = {
+  options.programs.todo = {
     enable = lib.mkEnableOption "Yet another todo app.";
 
     package = lib.mkPackageOption pkgs "todo" {};
