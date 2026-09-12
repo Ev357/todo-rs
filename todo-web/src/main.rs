@@ -1,9 +1,13 @@
+use std::error::Error;
+
 use dioxus::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::{head_meta::HeadMeta, home::Home, search_query::SearchQuery};
 
 mod components;
+#[cfg(feature = "server")]
+mod config;
 mod head_meta;
 mod home;
 mod icons;
@@ -12,23 +16,38 @@ mod method_spoofing_layer;
 mod search_query;
 mod todo_list;
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     #[cfg(feature = "server")]
-    dioxus::serve(|| async move {
-        use dioxus::{server, server::axum::Router};
+    {
+        use dioxus::{
+            server,
+            server::axum::{Extension, Router},
+        };
+        use todo_api::ApiClient;
         use tower::Layer;
 
-        use crate::method_spoofing_layer::MethodSpoofingLayer;
+        use crate::{config::Config, method_spoofing_layer::MethodSpoofingLayer};
 
-        let app_router = server::router(App);
+        let config = Config::load(".env")?;
 
-        let spoofed_service = Layer::layer(&MethodSpoofingLayer, app_router);
+        dioxus::serve(move || {
+            let api_client = ApiClient::new(config.api_url.clone());
 
-        Ok(Router::new().fallback_service(spoofed_service))
-    });
+            async move {
+                let app_router = server::router(App).layer(Extension(api_client));
+
+                let spoofed_service = Layer::layer(&MethodSpoofingLayer, app_router);
+
+                Ok(Router::new().fallback_service(spoofed_service))
+            }
+        });
+    }
 
     #[cfg(not(feature = "server"))]
-    dioxus::launch(App);
+    {
+        dioxus::launch(App);
+        Ok(())
+    }
 }
 
 #[derive(Clone, Routable, Debug, PartialEq, Serialize, Deserialize)]

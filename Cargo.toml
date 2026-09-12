@@ -2,7 +2,7 @@
 resolver = "2"
 members = [
   "todo-api",
-  "todo-desktop",
+  "todo-desktop", "todo-macro",
   "todo-mobile",
   "todo-server",
   "todo-ui",
@@ -14,7 +14,6 @@ edition = "2024"
 version = "0.1.0"
 license = "MIT"
 authors = ["Lucas Gager <evest.dev@gmail.com>"]
-homepage = "https://github.com/Ev357/todo-rs"
 repository = "https://github.com/Ev357/todo-rs"
 rust-version = "1.100.0"
 
@@ -32,6 +31,7 @@ debug = false
 
 [workspace.dependencies]
 todo-api = { path = "todo-api" }
+todo-macro = { path = "todo-macro" }
 todo-server = { path = "todo-server", default-features = false }
 
 dioxus = { git = "https://github.com/Ev357/dioxus", branch = "feat/query-method" }

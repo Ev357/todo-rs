@@ -5988,6 +5988,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "todo-macro"
+version = "0.1.0"
+
+[[package]]
 name = "todo-mobile"
 version = "0.1.0"
 dependencies = [
@@ -6002,6 +6006,7 @@ dependencies = [
  "color-eyre",
  "serde",
  "sqlx",
+ "todo-macro",
  "tokio",
  "uuid",
 ]
@@ -6024,6 +6029,7 @@ dependencies = [
  "serde_json",
  "serde_urlencoded",
  "todo-api",
+ "todo-macro",
  "todo-server",
  "tower",
  "uuid",

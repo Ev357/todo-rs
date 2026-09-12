@@ -1,5 +1,4 @@
 {
-  self,
   config,
   lib,
   pkgs,
@@ -10,7 +9,7 @@ in {
   options.services.todo-web = {
     enable = lib.mkEnableOption "Web server for todo-rs";
 
-    package = lib.mkPackageOption self.packages.${pkgs.stdenv.hostPlatform.system} "todo-web" {};
+    package = lib.mkPackageOption pkgs "todo-web" {};
 
     address = lib.mkOption {
       type = lib.types.str;

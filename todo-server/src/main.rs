@@ -18,7 +18,7 @@ const ENV_FILE: &str = ".env";
 async fn main() -> Result<()> {
     color_eyre::install()?;
 
-    let config = Config::load(ENV_FILE).await?;
+    let config = Config::load(ENV_FILE)?;
 
     let connection_options =
         SqliteConnectOptions::from_str(&config.database_url)?.create_if_missing(true);

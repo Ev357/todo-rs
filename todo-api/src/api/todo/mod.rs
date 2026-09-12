@@ -1,12 +1,22 @@
 use dioxus::prelude::*;
 use todo_server::db::todo::{CreateTodo, Todo, TodoQuery};
 
+#[cfg(feature = "server")]
+use crate::client::get_client;
+
 pub mod id;
 
 #[get("/api/todo")]
 pub async fn get_todos() -> Result<Vec<Todo>, ServerFnError> {
-    let response = reqwest::get("http://localhost:3000/api/todo")
+    let api = get_client().await?;
+
+    let response = api
+        .client
+        .get(api.url("/api/todo"))
+        .send()
         .await
+        .map_err(|error| ServerFnError::new(error.to_string()))?
+        .error_for_status()
         .map_err(|error| ServerFnError::new(error.to_string()))?;
 
     let todos = response
@@ -19,13 +29,16 @@ pub async fn get_todos() -> Result<Vec<Todo>, ServerFnError> {
 
 #[query("/api/todo")]
 pub async fn query_todos(query: TodoQuery) -> Result<Vec<Todo>, ServerFnError> {
-    let client = reqwest::Client::new();
+    let api = get_client().await?;
 
-    let response = client
-        .request(reqwest::Method::QUERY, "http://localhost:3000/api/todo")
+    let response = api
+        .client
+        .request(reqwest::Method::QUERY, api.url("/api/todo"))
         .json(&query)
         .send()
         .await
+        .map_err(|error| ServerFnError::new(error.to_string()))?
+        .error_for_status()
         .map_err(|error| ServerFnError::new(error.to_string()))?;
 
     let todos = response
@@ -42,13 +55,16 @@ pub async fn post_todos(data: CreateTodo) -> Result<Todo, ServerFnError> {
         return Err(ServerFnError::new("Title cannot be empty"));
     }
 
-    let client = reqwest::Client::new();
+    let api = get_client().await?;
 
-    let response = client
-        .post("http://localhost:3000/api/todo")
+    let response = api
+        .client
+        .post(api.url("/api/todo"))
         .json(&data)
         .send()
         .await
+        .map_err(|error| ServerFnError::new(error.to_string()))?
+        .error_for_status()
         .map_err(|error| ServerFnError::new(error.to_string()))?;
 
     let todo = response

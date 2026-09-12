@@ -5,7 +5,6 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
-homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
@@ -13,6 +12,8 @@ rust-version.workspace = true
 workspace = true
 
 [dependencies]
+todo-macro = { workspace = true }
+
 serde = { workspace = true }
 uuid = { workspace = true }
 sqlx = { workspace = true, optional = true }

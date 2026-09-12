@@ -1,12 +1,16 @@
 use dioxus::prelude::*;
 use todo_server::db::todo::{PatchTodo, Todo, Uuid};
 
+#[cfg(feature = "server")]
+use crate::client::get_client;
+
 #[patch("/api/todo/{id}")]
 pub async fn patch_todo(id: Uuid, data: PatchTodo) -> Result<Todo, ServerFnError> {
-    let client = reqwest::Client::new();
+    let api = get_client().await?;
 
-    let response = client
-        .patch(format!("http://localhost:3000/api/todo/{id}"))
+    let response = api
+        .client
+        .patch(api.url(&format!("/api/todo/{id}")))
         .json(&data)
         .send()
         .await
@@ -24,10 +28,10 @@ pub async fn patch_todo(id: Uuid, data: PatchTodo) -> Result<Todo, ServerFnError
 
 #[delete("/api/todo/{id}")]
 pub async fn delete_todo(id: Uuid) -> Result<(), ServerFnError> {
-    let client = reqwest::Client::new();
+    let api = get_client().await?;
 
-    client
-        .delete(format!("http://localhost:3000/api/todo/{id}"))
+    api.client
+        .delete(api.url(&format!("/api/todo/{id}")))
         .send()
         .await
         .map_err(|error| ServerFnError::new(error.to_string()))?

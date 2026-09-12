@@ -1,15 +1,13 @@
 [package]
-name = "todo-ui"
-description = "UI for todo-rs"
-version.workspace = true
+name = "todo-macro"
 edition.workspace = true
+version.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
+[dependencies]
+
 [lints]
 workspace = true
-
-[dependencies]
-dioxus = { workspace = true }

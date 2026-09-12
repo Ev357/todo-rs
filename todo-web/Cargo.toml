@@ -5,7 +5,6 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
-homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
@@ -14,6 +13,7 @@ workspace = true
 
 [dependencies]
 todo-api = { workspace = true }
+todo-macro = { workspace = true, optional = true }
 todo-server = { workspace = true, default-features = false }
 
 dioxus = { workspace = true, features = ["router", "fullstack"] }
@@ -30,4 +30,10 @@ gloo-timers = { workspace = true }
 [features]
 default = []
 web = ["dioxus/web"]
-server = ["dioxus/server", "todo-api/server", "dep:serde_json", "dep:tower"]
+server = [
+  "dioxus/server",
+  "todo-api/server",
+  "dep:serde_json",
+  "dep:tower",
+  "dep:todo-macro",
+]
