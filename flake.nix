@@ -70,11 +70,13 @@
       default = pkgs.callPackage ./nix/shell.nix {inherit craneLib wasm-bindgen-cli dioxus-cli;};
     });
 
-    overlays.default = final: prev: {
-      todo-server = self.packages.${final.system}.todo-server;
-      todo-web = self.packages.${final.system}.todo-web;
-      wasm-bindgen-cli = self.packages.${final.system}.wasm-bindgen-cli;
-      dioxus-cli = self.packages.${final.system}.dioxus-cli;
+    overlays.default = final: _: let
+      system = final.stdenv.hostPlatform.system;
+    in {
+      todo-server = self.packages.${system}.todo-server;
+      todo-web = self.packages.${system}.todo-web;
+      wasm-bindgen-cli = self.packages.${system}.wasm-bindgen-cli;
+      dioxus-cli = self.packages.${system}.dioxus-cli;
     };
 
     nixosModules = {
