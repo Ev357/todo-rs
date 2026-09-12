@@ -69,5 +69,10 @@
     in {
       default = pkgs.callPackage ./nix/shell.nix {inherit craneLib wasm-bindgen-cli dioxus-cli;};
     });
+
+    nixosModules = {
+      todo = import ./nix/nixos {inherit self;};
+      default = self.nixosModules.todo;
+    };
   };
 }

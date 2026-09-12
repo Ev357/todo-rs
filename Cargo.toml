@@ -1,12 +1,12 @@
 [workspace]
 resolver = "2"
 members = [
-  "todo-ui",
-  "todo-web",
+  "todo-api",
   "todo-desktop",
   "todo-mobile",
-  "todo-api",
   "todo-server",
+  "todo-ui",
+  "todo-web",
 ]
 
 [workspace.package]
@@ -31,8 +31,8 @@ incremental = false
 debug = false
 
 [workspace.dependencies]
-todo-server = { path = "todo-server", default-features = false }
 todo-api = { path = "todo-api" }
+todo-server = { path = "todo-server", default-features = false }
 
 dioxus = { git = "https://github.com/Ev357/dioxus", branch = "feat/query-method" }
 sqlx = { version = "0.9.0", features = ["sqlite", "runtime-tokio", "uuid"] }
