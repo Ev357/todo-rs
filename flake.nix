@@ -40,43 +40,57 @@
     packages = forAllSystems (system: let
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [fenix.overlays.default];
+        overlays = [
+          self.overlays.default
+          fenix.overlays.default
+        ];
       };
 
       toolchain = pkgs.callPackage ./nix/toolchain.nix {};
       craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
-
-      wasm-bindgen-cli = self.packages.${system}.wasm-bindgen-cli;
-      dioxus-cli = self.packages.${system}.dioxus-cli;
     in {
       todo-server = pkgs.callPackage ./nix/todo-server.nix {inherit craneLib;};
-      todo-web = pkgs.callPackage ./nix/todo-web.nix {inherit craneLib wasm-bindgen-cli dioxus-cli;};
+      todo-web = pkgs.callPackage ./nix/todo-web.nix {inherit craneLib;};
+      todo = pkgs.callPackage ./nix/todo.nix {inherit craneLib;};
       wasm-bindgen-cli = pkgs.callPackage ./nix/wasm-bindgen-cli.nix {inherit craneLib;};
       dioxus-cli = dioxus.packages.${system}.dioxus-cli;
+      default = self.packages.${system}.todo;
     });
 
     devShells = forAllSystems (system: let
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [fenix.overlays.default];
+        overlays = [
+          self.overlays.default
+          fenix.overlays.default
+        ];
       };
 
       toolchain = pkgs.callPackage ./nix/toolchain.nix {};
       craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
-
-      wasm-bindgen-cli = self.packages.${system}.wasm-bindgen-cli;
-      dioxus-cli = self.packages.${system}.dioxus-cli;
     in {
-      default = pkgs.callPackage ./nix/shell.nix {inherit craneLib wasm-bindgen-cli dioxus-cli;};
+      default = pkgs.callPackage ./nix/shell.nix {inherit craneLib;};
     });
 
-    overlays.default = final: _: let
-      system = final.stdenv.hostPlatform.system;
-    in {
-      todo-server = self.packages.${system}.todo-server;
-      todo-web = self.packages.${system}.todo-web;
-      wasm-bindgen-cli = self.packages.${system}.wasm-bindgen-cli;
-      dioxus-cli = self.packages.${system}.dioxus-cli;
+    overlays = {
+      todo = final: _: let
+        system = final.stdenv.hostPlatform.system;
+      in {
+        todo-server = self.packages.${system}.todo-server;
+        todo-web = self.packages.${system}.todo-web;
+        todo = self.packages.${system}.todo;
+        wasm-bindgen-cli = self.packages.${system}.wasm-bindgen-cli;
+        dioxus-cli = self.packages.${system}.dioxus-cli;
+      };
+      default = self.overlays.todo;
+    };
+
+    homeModules = {
+      todo = {
+        imports = [./nix/home-manager.nix];
+        nixpkgs.overlays = [self.overlays.default];
+      };
+      default = self.homeModules.todo;
     };
 
     nixosModules = {
