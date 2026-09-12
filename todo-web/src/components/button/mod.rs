@@ -26,21 +26,29 @@ impl ButtonVariant {
     pub const fn as_str(&self) -> &'static str {
         match self {
             Self::Default => "bg-primary text-primary-foreground hover:bg-primary/80",
-            Self::Outline => "\
+            Self::Outline => {
+                "\
                 border-border bg-background shadow-xs hover:bg-muted hover:text-foreground \
                 aria-expanded:bg-muted aria-expanded:text-foreground \
-                dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
-            Self::Secondary => "\
+                dark:border-input dark:bg-input/30 dark:hover:bg-input/50"
+            }
+            Self::Secondary => {
+                "\
                 bg-secondary text-secondary-foreground \
                 hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] \
-                aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
-            Self::Ghost => "\
+                aria-expanded:bg-secondary aria-expanded:text-secondary-foreground"
+            }
+            Self::Ghost => {
+                "\
                 hover:bg-muted hover:text-foreground aria-expanded:bg-muted \
-                aria-expanded:text-foreground dark:hover:bg-muted/50",
-            Self::Destructive => "\
+                aria-expanded:text-foreground dark:hover:bg-muted/50"
+            }
+            Self::Destructive => {
+                "\
                 bg-destructive/10 text-destructive hover:bg-destructive/20 \
                 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 \
-                dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+                dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40"
+            }
             Self::Link => "text-primary underline-offset-4 hover:underline",
         }
     }
@@ -63,25 +71,37 @@ pub enum ButtonSize {
 impl ButtonSize {
     pub const fn as_str(&self) -> &'static str {
         match self {
-            Self::Default => "\
+            Self::Default => {
+                "\
                 h-9 gap-1.5 px-2.5 in-data-[slot=button-group]:rounded-md \
-                has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-            Self::Xs => "\
+                has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2"
+            }
+            Self::Xs => {
+                "\
                 h-6 gap-1 rounded-[min(var(--radius-md),8px)] px-2 text-xs \
                 in-data-[slot=button-group]:rounded-md has-data-[icon=inline-end]:pr-1.5 \
-                has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-            Self::Sm => "\
+                has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3"
+            }
+            Self::Sm => {
+                "\
                 h-8 gap-1 rounded-[min(var(--radius-md),10px)] px-2.5 \
                 in-data-[slot=button-group]:rounded-md has-data-[icon=inline-end]:pr-1.5 \
-                has-data-[icon=inline-start]:pl-1.5",
-            Self::Lg => "\
-                h-10 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+                has-data-[icon=inline-start]:pl-1.5"
+            }
+            Self::Lg => {
+                "\
+                h-10 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2"
+            }
             Self::Icon => "size-9",
-            Self::IconXs => "\
+            Self::IconXs => {
+                "\
                 size-6 rounded-[min(var(--radius-md),8px)] in-data-[slot=button-group]:rounded-md \
-                [&_svg:not([class*='size-'])]:size-3",
-            Self::IconSm => "\
-                size-8 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-md",
+                [&_svg:not([class*='size-'])]:size-3"
+            }
+            Self::IconSm => {
+                "\
+                size-8 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-md"
+            }
             Self::IconLg => "size-10",
         }
     }

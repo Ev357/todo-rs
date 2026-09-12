@@ -1,11 +1,11 @@
 use dioxus::prelude::*;
 
 use crate::{
+    Route,
     components::input::Input,
     icons::{loader::LoaderIcon, search::SearchIcon},
     search_query::SearchQuery,
     todo_list::TodoList,
-    Route,
 };
 
 #[component]
