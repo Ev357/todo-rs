@@ -1,6 +1,5 @@
 {
   lib,
-  pkgs,
   craneLib,
   dioxus-cli,
   wasm-bindgen-cli,
@@ -8,12 +7,19 @@
   esbuild,
   makeWrapper,
 }: let
-  src = pkgs.lib.cleanSource ../.;
+  unfilteredRoot = ../.;
+  src = lib.fileset.toSource {
+    root = unfilteredRoot;
+    fileset = lib.fileset.unions [
+      (craneLib.fileset.commonCargoSources unfilteredRoot)
+      (lib.fileset.maybeMissing (unfilteredRoot + "/${pname}"))
+    ];
+  };
 
   pname = "todo-web";
   cargoToml = fromTOML (builtins.readFile ../Cargo.toml);
   commonArgs = {
-    inherit pname;
+    inherit pname src;
     version = cargoToml.workspace.package.version;
 
     strictDeps = true;
@@ -31,15 +37,12 @@
     cargoExtraArgs = "-p ${pname} --target wasm32-unknown-unknown";
   };
 
-  cargoArtifacts = craneLib.buildDepsOnly (commonArgs
-    // {
-      src = craneLib.cleanCargoSource src;
-    });
+  cargoArtifacts = craneLib.buildDepsOnly commonArgs;
 in
   craneLib.buildPackage (
     commonArgs
     // rec {
-      inherit src cargoArtifacts;
+      inherit cargoArtifacts;
 
       buildPhaseCargoCommand =
         # bash
