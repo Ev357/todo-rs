@@ -42,14 +42,14 @@ Also wanted to try out Dioxus.
     enable = false;
     address = "127.0.0.1";
     port = 7630;
-    openFirewall = true;
+    openFirewall = false;
   };
 
   services.todo-web = {
     enable = true;
     address = "127.0.0.1";
     port = 7631;
-    openFirewall = true;
+    openFirewall = false;
     apiUrl = "http://127.0.0.1:7630";
   };
 }
