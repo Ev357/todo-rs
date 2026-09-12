@@ -28,6 +28,12 @@ in {
       default = false;
       description = "Whether to open the firewall for the todo-web port.";
     };
+
+    apiUrl = lib.mkOption {
+      type = lib.types.str;
+      default = "http://127.0.0.1:7630";
+      description = "URL of the todo-server API backend.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -41,6 +47,7 @@ in {
       environment = {
         PORT = toString cfg.port;
         IP = cfg.address;
+        API_URL = cfg.apiUrl;
       };
 
       serviceConfig = {
